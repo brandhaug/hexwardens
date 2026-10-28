@@ -18,6 +18,10 @@
 	"include": [
 		"./**/*.ts",
 		"../alchemy.run.ts",
+		"../alchemy.bootstrap.ts",
+		"../deployment.config.ts",
+		"../scripts/check-commit-message.ts",
+		"../scripts/dev.ts",
 		"../scripts/alchemy-stage.ts",
 		"../scripts/d1-backup.ts",
 		"../scripts/check-shared-d1.ts",

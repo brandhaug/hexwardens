@@ -16,7 +16,11 @@ try {
 		},
 		{
 			command: process.execPath,
-			args: ['--input-type=module', '-e', "await import('./alchemy.run.ts')"]
+			args: [
+				'--input-type=module',
+				'-e',
+				"await import('./alchemy.run.ts'); await import('./alchemy.bootstrap.ts')"
+			]
 		}
 	]
 	for (const { command, args } of commands) {

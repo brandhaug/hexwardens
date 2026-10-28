@@ -1,11 +1,8 @@
 import { spawnSync } from 'node:child_process'
 import { fileURLToPath } from 'node:url'
 import { parseArgs } from 'node:util'
-import {
-	deploymentOrigins,
-	requiredEnv,
-	validateStage
-} from '../infra/bindings.ts'
+import { requiredEnv, validateStage } from '../infra/bindings.ts'
+import { resolveDeploymentEnvironment } from '../infra/deployment-env.ts'
 
 export function stageCommand(
 	action: string,
@@ -46,6 +43,7 @@ if (import.meta.main) {
 	) {
 		throw new Error('Unset Workers shim flags before deployment')
 	}
+	const origins = await resolveDeploymentEnvironment(values.stage ?? '')
 	const result = spawnSync(
 		fileURLToPath(new URL('../node_modules/.bin/alchemy', import.meta.url)),
 		args,
@@ -53,7 +51,9 @@ if (import.meta.main) {
 			stdio: 'inherit',
 			env: {
 				...process.env,
-				VITE_GAME_SERVER_URL: deploymentOrigins(values.stage ?? '').gameServer
+				BETTER_AUTH_URL: origins.web,
+				GAME_SERVER_URL: origins.gameServer,
+				VITE_GAME_SERVER_URL: origins.gameServer
 			}
 		}
 	)

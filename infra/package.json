@@ -10,6 +10,8 @@
 		"@cloudflare/workers-types": "catalog:",
 		"@effect/tsgo": "catalog:",
 		"@types/node": "catalog:",
+		"alchemy": "catalog:",
+		"effect": "catalog:",
 		"typescript": "catalog:"
 	}
 }

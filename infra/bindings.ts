@@ -61,21 +61,31 @@ export function requiredEnv(name: string): string {
 
 export function deploymentOrigins(stage: string) {
 	const names = stageResourceNames(stage)
-	if (stage !== 'prod') {
-		const subdomain = requiredEnv('CLOUDFLARE_WORKERS_SUBDOMAIN')
-		if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(subdomain)) {
-			throw new Error('Invalid workers.dev subdomain')
-		}
+	if (
+		stage === 'prod' &&
+		process.env.BETTER_AUTH_URL &&
+		process.env.GAME_SERVER_URL
+	) {
 		return {
-			web: validateOrigin(`https://${names.web}.${subdomain}.workers.dev`),
-			gameServer: validateOrigin(
-				`https://${names.gameServer}.${subdomain}.workers.dev`
-			)
+			web: validateOrigin(process.env.BETTER_AUTH_URL),
+			gameServer: validateOrigin(process.env.GAME_SERVER_URL)
 		}
 	}
+	const subdomain = requiredEnv('CLOUDFLARE_WORKERS_SUBDOMAIN')
+	if (!/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(subdomain)) {
+		throw new Error('Invalid workers.dev subdomain')
+	}
 	return {
-		web: validateOrigin(requiredEnv('BETTER_AUTH_URL')),
-		gameServer: validateOrigin(requiredEnv('GAME_SERVER_URL'))
+		web: validateOrigin(
+			stage === 'prod' && process.env.BETTER_AUTH_URL
+				? process.env.BETTER_AUTH_URL
+				: `https://${names.web}.${subdomain}.workers.dev`
+		),
+		gameServer: validateOrigin(
+			stage === 'prod' && process.env.GAME_SERVER_URL
+				? process.env.GAME_SERVER_URL
+				: `https://${names.gameServer}.${subdomain}.workers.dev`
+		)
 	}
 }
 

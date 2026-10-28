@@ -729,6 +729,7 @@ const { lint = {} } = defineConfig({
 					'.github/scripts/**',
 					'infra/**',
 					'alchemy.run.ts',
+					'alchemy.bootstrap.ts',
 					'**/*.config.ts'
 				],
 				rules: {

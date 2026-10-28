@@ -2,8 +2,12 @@
 node_modules
 .DS_Store
 .env
+.env.*
 .dev.vars
+.dev.vars.*
 !.env.example
+!.env.*.example
+!.dev.vars.example
 
 # IntelliJ IDEA
 .idea/
@@ -50,3 +54,6 @@ apps/web/storybook-static/
 
 # Private research stays outside version control
 /docs/research/
+
+# Local operator credentials and validation output
+/artifacts/

@@ -691,6 +691,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 26.6.3
+      alchemy:
+        specifier: 'catalog:'
+        version: 2.0.0-beta.79(patch_hash=f7f0d0454deeb1fa8eef6d06ab17226d5a02c42b5206fbf7a5b9924c53be2938)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0)
+      effect:
+        specifier: 'catalog:'
+        version: 4.0.6
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

@@ -1,4 +1,3 @@
-import { Schema } from 'effect'
 import { appendFileSync } from 'node:fs'
 import { setTimeout } from 'node:timers/promises'
 import {
@@ -6,31 +5,12 @@ import {
 	requiredEnv,
 	validateStage
 } from '../../infra/bindings.ts'
+import { resolveDeploymentEnvironment } from '../../infra/deployment-env.ts'
 
 const action = process.argv[2]
 const stage = validateStage(requiredEnv('ALCHEMY_STAGE'))
 if (action === 'urls') {
-	if (stage !== 'prod') {
-		const response = await fetch(
-			`https://api.cloudflare.com/client/v4/accounts/${requiredEnv('CLOUDFLARE_ACCOUNT_ID')}/workers/subdomain`,
-			{
-				headers: {
-					Authorization: `Bearer ${requiredEnv('CLOUDFLARE_API_TOKEN')}`
-				},
-				signal: AbortSignal.timeout(15_000)
-			}
-		)
-		if (!response.ok) {
-			throw new Error(`Subdomain lookup failed: HTTP ${response.status}`)
-		}
-		const body = Schema.decodeUnknownSync(
-			Schema.Struct({
-				result: Schema.Struct({ subdomain: Schema.String })
-			})
-		)(await response.json())
-		process.env.CLOUDFLARE_WORKERS_SUBDOMAIN = body.result.subdomain
-	}
-	const origins = deploymentOrigins(stage)
+	const origins = await resolveDeploymentEnvironment(stage)
 	appendFileSync(
 		requiredEnv('GITHUB_ENV'),
 		`CLOUDFLARE_WORKERS_SUBDOMAIN=${process.env.CLOUDFLARE_WORKERS_SUBDOMAIN ?? ''}\nBETTER_AUTH_URL=${origins.web}\nGAME_SERVER_URL=${origins.gameServer}\n`
