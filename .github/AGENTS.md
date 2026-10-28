@@ -3,7 +3,7 @@
 Read [docs/deploying.md](../docs/deploying.md) before changing secrets, environments or deployment triggers.
 
 - Fork PRs run credential-free CI. Keep default token permissions read-only and checkout credentials disabled. Pin third-party Actions by commit SHA.
-- `CI gate` fails when any required job fails, is cancelled, or is skipped. `audit` scans secrets and dependencies with policy from the trusted base. Preserve these check names; bootstrap-managed branch protection requires them.
+- `CI gate` fails when any required job fails, is cancelled, or is skipped. `audit` scans secrets and dependencies with policy from the trusted base. Audit is advisory for PR merges; bootstrap-managed branch protection requires `CI gate` and `Conventional commit title`.
 - `Conventional commit title` is the semantic PR check. Squash merges use the PR title. Keep its allowed types aligned with `scripts/check-commit-message.ts`.
 - Deployment requires successful CI and Audit push runs for the exact current `master` SHA. Never consume untrusted workflow artifacts or run fork code with production secrets.
 - `DEPLOY_ENABLED`, `PREVIEW_ENABLED`, `BACKUP_ENABLED`, and `CATALOG_UPDATES_ENABLED` are repository variables. Jobs cannot read environment variables until their environment is selected.

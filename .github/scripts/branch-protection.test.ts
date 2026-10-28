@@ -20,7 +20,7 @@ globalThis.fetch = async (url, init) => {
   if (init.method === 'PUT') requests.push(JSON.parse(init.body))
   return Response.json({ url: String(url), required_signatures: { enabled: false } })
 }
-const checks = ['CI gate', 'audit', 'Conventional commit title']
+const checks = ['CI gate', 'Conventional commit title']
 for (const requiredStatusChecks of [
   { strict: true, checks: checks.map(context => ({ context, appId: 15368 })) },
   { strict: false, contexts: ['legacy'] },

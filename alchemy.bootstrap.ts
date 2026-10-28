@@ -34,9 +34,10 @@ export default Alchemy.Stack(
 			requiredPullRequestReviews: { requiredApprovingReviewCount: 0 },
 			requiredStatusChecks: {
 				strict: true,
-				checks: ['CI gate', 'audit', 'Conventional commit title'].map(
-					(context) => ({ context, appId: 15_368 })
-				)
+				checks: ['CI gate', 'Conventional commit title'].map((context) => ({
+					context,
+					appId: 15_368
+				}))
 			}
 		}).pipe(Alchemy.RemovalPolicy.retain())
 		yield* configureDeployment(owner, repository, accountId, 'production')

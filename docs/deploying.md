@@ -52,7 +52,7 @@ If an apply fails after token creation, retain the state and rerun. Do not destr
 
 ## Branch protection
 
-Bootstrap owns the `default-branch` protection resource. It requires `CI gate`, `audit` and `Conventional commit title`, all bound to the GitHub Actions app. `CI gate` includes lint, typechecking, unit tests, builds and all E2E shards. Protection applies to admins, requires up-to-date branches and resolved conversations, enforces linear history, and blocks force pushes and branch deletion.
+Bootstrap owns the `default-branch` protection resource. It requires `CI gate` and `Conventional commit title`, both bound to the GitHub Actions app. `CI gate` includes lint, typechecking, unit tests, builds and all E2E shards. Audit reports findings without blocking PR merges. Protection applies to admins, requires up-to-date branches and resolved conversations, enforces linear history, and blocks force pushes and branch deletion.
 
 The beta.84 GitHub provider sends the correct status-check payload without a local patch. Reapplying bootstrap reconciles an existing rule. Its retain policy preserves protection if the resource is later removed from the stack. Keep existing bootstrap state; no state detachment is required.
 
