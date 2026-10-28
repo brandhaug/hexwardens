@@ -2,6 +2,8 @@
 
 `alchemy.run.ts` owns application resources. `alchemy.bootstrap.ts` owns deployment access and GitHub environments. Read [docs/deploying.md](../docs/deploying.md) for operator inputs and recovery.
 
+Branch protection is configured directly in GitHub, outside Alchemy state. Bootstrap must not create or delete branch protection.
+
 - App state uses `Cloudflare.state()`. Bootstrap uses private local state and stable `Alchemy.Random` credentials. Preserve the bootstrap state; it holds token values Cloudflare returns only once.
 - `bindings.ts` owns resource names, compatibility settings, rate limits and origin validation. `write-wrangler.ts` generates local configs; run `pnpm run infra:wrangler` after changing those contracts.
 - `deployment-env.ts` discovers the Workers subdomain. The CLI, CI and smoke checks share its origins. Preview origins always ignore production overrides.

@@ -407,7 +407,7 @@ patchedDependencies:
   '@distilled.cloud/fly-io@1.0.0-rc.12': 4e8d289148ff2f76f2965db4b9d2a2202d1541733926f41aa114284476a974ca
   '@distilled.cloud/railway@1.0.0-rc.12': c58258c570c317620a718b496df8519587ae874f5a1157f4ebfe9a48a746c8bb
   '@distilled.cloud/stripe@1.0.0-rc.12': 6d6761f13914804a2bf4e67affac098a49b762a26df32473036a5e0dc8cd0ace
-  alchemy@2.0.0-beta.79: 5f3e96c5551557009a4e9ad732f578abfe8eff7950400e5d62a5031e9e3a7343
+  alchemy@2.0.0-beta.79: f7f0d0454deeb1fa8eef6d06ab17226d5a02c42b5206fbf7a5b9924c53be2938
 
 importers:
 
@@ -427,7 +427,7 @@ importers:
         version: 26.6.3
       alchemy:
         specifier: 'catalog:'
-        version: 2.0.0-beta.79(patch_hash=5f3e96c5551557009a4e9ad732f578abfe8eff7950400e5d62a5031e9e3a7343)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0)
+        version: 2.0.0-beta.79(patch_hash=f7f0d0454deeb1fa8eef6d06ab17226d5a02c42b5206fbf7a5b9924c53be2938)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0)
       effect:
         specifier: 'catalog:'
         version: 4.0.6
@@ -693,7 +693,7 @@ importers:
         version: 26.6.3
       alchemy:
         specifier: 'catalog:'
-        version: 2.0.0-beta.79(patch_hash=5f3e96c5551557009a4e9ad732f578abfe8eff7950400e5d62a5031e9e3a7343)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0)
+        version: 2.0.0-beta.79(patch_hash=f7f0d0454deeb1fa8eef6d06ab17226d5a02c42b5206fbf7a5b9924c53be2938)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0)
       effect:
         specifier: 'catalog:'
         version: 4.0.6
@@ -13723,7 +13723,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
 
-  alchemy@2.0.0-beta.79(patch_hash=5f3e96c5551557009a4e9ad732f578abfe8eff7950400e5d62a5031e9e3a7343)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0):
+  alchemy@2.0.0-beta.79(patch_hash=f7f0d0454deeb1fa8eef6d06ab17226d5a02c42b5206fbf7a5b9924c53be2938)(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(@types/react@19.3.0)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(typescript@7.0.2)(vitest@5.0.3)(ws@8.22.0):
     dependencies:
       '@alchemy.run/cloudflare-runtime': 2.0.0-beta.79(patch_hash=d5a0d6ac12f55d2485faeb07072648a47df5a5eaf174bea8e49017d17eb21c80)(@distilled.cloud/cloudflare@1.0.0-rc.12(effect@4.0.6))(@effect/platform-node@4.0.0(effect@4.0.6))(@types/node@26.6.3)(effect@4.0.6)(esbuild@0.28.2)(jiti@2.7.0)(rolldown@1.2.5)(terser@5.51.2)(typescript@7.0.2)(yaml@2.9.1)
       '@alchemy.run/floci': 2.0.0-beta.79(effect@4.0.6)
