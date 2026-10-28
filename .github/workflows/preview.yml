@@ -1,0 +1,71 @@
+name: Preview
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+permissions:
+  contents: read
+concurrency:
+  group: preview-${{ github.event.pull_request.number }}
+  # Never interrupt an Alchemy state mutation. Close cleanup queues behind deploy.
+  cancel-in-progress: false
+env:
+  ALCHEMY_STAGE: pr-${{ github.event.pull_request.number }}
+jobs:
+  deploy:
+    if: >-
+      vars.PREVIEW_ENABLED == 'true' && github.event.action != 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # Require reviewer approval; this job runs PR code with preview-only credentials.
+    environment: preview
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Deploy isolated preview and probe health
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PREVIEW_CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.PREVIEW_CLOUDFLARE_ACCOUNT_ID }}
+          AUTH_JWT_SECRET: ${{ secrets.PREVIEW_AUTH_JWT_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.PREVIEW_BETTER_AUTH_SECRET }}
+        run: |
+          node .github/scripts/deployment.ts urls
+      - name: Deploy stage
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PREVIEW_CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.PREVIEW_CLOUDFLARE_ACCOUNT_ID }}
+          AUTH_JWT_SECRET: ${{ secrets.PREVIEW_AUTH_JWT_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.PREVIEW_BETTER_AUTH_SECRET }}
+        run: node scripts/alchemy-stage.ts deploy --stage="$ALCHEMY_STAGE" --confirm-target="$CLOUDFLARE_ACCOUNT_ID/$ALCHEMY_STAGE"
+      - run: node .github/scripts/deployment.ts smoke
+  destroy:
+    if: >-
+      vars.PREVIEW_ENABLED == 'true' && github.event.action == 'closed' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: preview-cleanup
+    steps:
+      # Cleanup executes trusted default-branch code, never the closed PR head.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+          persist-credentials: false
+      - uses: ./.github/actions/setup
+      - name: Resolve preview account subdomain
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PREVIEW_CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.PREVIEW_CLOUDFLARE_ACCOUNT_ID }}
+        run: node .github/scripts/deployment.ts urls
+      - name: Destroy only the closed preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.PREVIEW_CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.PREVIEW_CLOUDFLARE_ACCOUNT_ID }}
+          AUTH_JWT_SECRET: ${{ secrets.PREVIEW_AUTH_JWT_SECRET }}
+          BETTER_AUTH_SECRET: ${{ secrets.PREVIEW_BETTER_AUTH_SECRET }}
+        run: node scripts/alchemy-stage.ts destroy --stage="$ALCHEMY_STAGE" --confirm-target="$CLOUDFLARE_ACCOUNT_ID/$ALCHEMY_STAGE"

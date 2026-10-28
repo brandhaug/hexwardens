@@ -1,0 +1,94 @@
+{
+	"$schema": "https://raw.githubusercontent.com/fallow-rs/fallow/main/schema.json",
+	"ignoreExportsUsedInFile": true,
+	"ignorePatterns": ["docs/audits/effect-machine/**"],
+	"dynamicallyLoaded": [
+		"apps/web/content/wiki/**/*.mdx",
+		"apps/web/pwa-assets.config.ts",
+		"apps/web/src/lib/cloudflare-workers-shim.ts"
+	],
+	"usedClassMembers": [
+		{
+			"extends": "DurableObject",
+			"members": [
+				"init",
+				"fetch",
+				"alarm",
+				"webSocketMessage",
+				"webSocketClose",
+				"webSocketError",
+				"increment",
+				"decrement",
+				"count"
+			]
+		}
+	],
+	"framework": [
+		{
+			"name": "vite-plus-config",
+			"enablers": ["vite-plus"],
+			"entryPoints": ["vite.config.ts"],
+			"entryPointRole": "support",
+			"toolingDependencies": ["eslint-plugin-better-tailwindcss", "ultracite"]
+		},
+		{
+			"name": "alchemy-deployment",
+			"enablers": ["alchemy"],
+			"toolingDependencies": ["@effect/platform-node"],
+			"entryPoints": ["alchemy.run.ts"],
+			"entryPointRole": "support"
+		},
+		{
+			"name": "repository-tools",
+			"enablers": ["@gltf-transform/cli"],
+			"toolingDependencies": ["@gltf-transform/cli", "gltf-pipeline"],
+			"entryPoints": ["tools/**/*.ts"],
+			"entryPointRole": "support"
+		}
+	],
+	"minimumVersion": "3.30.0",
+	"ignoreExports": [
+		{
+			"file": "apps/web/src/components/game/board.tsx",
+			"exports": ["Board"]
+		},
+		{
+			"file": "packages/game-logic/src/match/client-message-router.ts",
+			"exports": ["decodeClientMessage"]
+		}
+	],
+	"failOnParseError": true,
+	"regression": {
+		"baseline": {
+			"analysisIdentity": {
+				"mode": "syntactic",
+				"semantic_schema_version": 1,
+				"capabilities": [],
+				"project_config_hash": "",
+				"backend_family": "",
+				"completeness": "complete"
+			},
+			"totalIssues": 0,
+			"unusedFiles": 0,
+			"unusedExports": 0,
+			"unusedTypes": 0,
+			"unusedDependencies": 0,
+			"unusedDevDependencies": 0,
+			"unusedOptionalDependencies": 0,
+			"unusedEnumMembers": 0,
+			"unusedClassMembers": 0,
+			"unresolvedImports": 0,
+			"unlistedDependencies": 0,
+			"duplicateExports": 0,
+			"circularDependencies": 0,
+			"reExportCycles": 0,
+			"typeOnlyDependencies": 0,
+			"testOnlyDependencies": 0,
+			"devDependenciesInProduction": 0,
+			"boundaryViolations": 0,
+			"boundaryCoverageViolations": 0,
+			"boundaryCallViolations": 0,
+			"policyViolations": 0
+		}
+	}
+}

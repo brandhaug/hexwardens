@@ -1,0 +1,69 @@
+{
+	"$schema": "https://raw.githubusercontent.com/brandhaug/catalog-update-action/v1/schema.json",
+	"defaultBranch": "master",
+	"maxOpenPrs": 20,
+	"concurrency": 10,
+	"groups": [
+		{
+			"name": "react",
+			"patterns": ["react", "react-dom", "@types/react", "@types/react-dom"]
+		},
+		{ "name": "effect", "patterns": ["effect", "@effect/*"] },
+		{ "name": "better-auth", "patterns": ["better-auth", "@better-auth/*"] },
+		{ "name": "drizzle", "patterns": ["drizzle-orm", "drizzle-kit"] },
+		{
+			"name": "cloudflare-runtime",
+			"patterns": [
+				"wrangler",
+				"miniflare",
+				"@cloudflare/workers-types",
+				"@cloudflare/vitest-plugin"
+			]
+		},
+		{
+			"name": "tanstack-router",
+			"patterns": [
+				"@tanstack/react-router*",
+				"@tanstack/router*",
+				"@tanstack/react-start*",
+				"@tanstack/start*"
+			]
+		},
+		{
+			"name": "tanstack-query",
+			"patterns": ["@tanstack/react-query*", "@tanstack/query*"]
+		},
+		{ "name": "tanstack", "patterns": ["@tanstack/*"] },
+		{
+			"name": "tailwind",
+			"patterns": [
+				"tailwindcss",
+				"@tailwindcss/*",
+				"tailwind-merge",
+				"tw-animate-css"
+			]
+		},
+		{
+			"name": "vite",
+			"patterns": [
+				"vite",
+				"vite-plus",
+				"@voidzero-dev/vite-plus-*",
+				"@vitejs/*",
+				"vitest",
+				"@vitest/*",
+				"vite-plugin-pwa"
+			]
+		},
+		{ "name": "oxc", "patterns": ["oxlint*", "oxfmt"] },
+		{ "name": "testing-library", "patterns": ["@testing-library/*"] },
+		{ "name": "zod", "patterns": ["zod"] },
+		{ "name": "radix-ui", "patterns": ["radix-ui", "@radix-ui/*"] },
+		{
+			"name": "mdx",
+			"patterns": ["@mdx-js/*", "remark-*", "rehype-*", "@types/mdx"]
+		},
+		{ "name": "all-patch-updates", "patterns": ["*"], "updateTypes": ["patch"] }
+	],
+	"ignore": []
+}

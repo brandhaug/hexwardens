@@ -1,0 +1,99 @@
+---
+title: 'Movement'
+description: 'How unit movement works — movement points, terrain costs, water vs ocean traversal, flying, and exploration.'
+category: mechanics
+order: 2
+---
+
+Units move across the hex grid tile by tile. Each [unit type](/wiki/units/unit-types) has a movement stat that determines how far it can travel per Turn.
+
+## Movement Points
+
+| Unit        | Land Movement | Water Movement |
+| ----------- | ------------- | -------------- |
+| Caveman     | 1             | 1              |
+| Archer      | 1             | 1              |
+| Guard       | 1             | 1              |
+| Spearman    | 1             | 1              |
+| Seer        | 2             | 1              |
+| Sprinter    | 3             | 1              |
+| Mage        | 1             | 1              |
+| Swordsman   | 1             | 1              |
+| Bombardier  | 1             | 2              |
+| Tidebreaker | 1             | 3              |
+
+**Seers** and **Sprinters** carry the lion's share of land mobility. With Scout culled, the Seer is the workhorse for early exploration.
+
+[Hero units](/wiki/units/unit-types) generally have 1 movement, with notable exceptions: **Wolf** and **Skeleton Golem** have 2 movement.
+
+## Movement Rules
+
+- A unit must be in **ready** mode to move
+- Units cannot move onto tiles occupied by other units
+- Movement uses breadth-first pathfinding to find valid destinations
+- After moving, the unit enters **moved** mode
+- A Seer in **retreat** mode can take exactly one follow-up move (no further attack this round)
+- The [Frostlord's](/wiki/units/unit-types) Frozen Ground ability reduces enemy movement by 1 within 1 tile
+
+### Terrain Costs
+
+Most tiles cost 1 movement to enter. Exceptions:
+
+- **Stone tiles** require **Climbing** tech to enter at all, and cost **2 movement** per step (so a 1-movement unit cannot reach a stone tile without a movement bonus).
+- **Shallow water** requires **Water & Bomber** for ordinary land units. Native water-branch units (Bombardier, Tidebreaker) ignore the gate.
+- **Deep ocean** requires **Ocean & Admiral** (which carries the `ocean_traversal` passive). Bombardier and Tidebreaker have innate ocean traversal — no tech needed.
+
+## Water vs. Ocean
+
+The board now distinguishes two water tiers:
+
+- **Shallow water** lines coastlines and accepts Tavern / Dock placement; it is gated by **Water & Bomber**.
+- **Deep ocean** is interior water surrounded entirely by water; it is gated by **Ocean & Admiral**.
+
+Once on water, a land unit fights and moves as a [naval form](#naval-forms) of itself. **Bombardiers** become tougher bombship-style units with stronger splash; **Tidebreakers** become fast battleship-style units (3 water movement, 2 range).
+
+### Naval forms
+
+Land units cross water with their water-form stats: typically 1–2 water movement, naval range, and the ability to keep attacking after embarking.
+
+## Flying
+
+The **flying** [passive](/wiki/units/unit-types#passive-abilities) is wired into the engine but no production unit currently carries it. When a unit gains flying:
+
+- **In transit**, every tile costs a flat 1 movement and tech gates are ignored. The unit can pass over stone, water, and ocean freely without Climbing or the water techs.
+- **On the destination tile**, the same gates as ground movement apply: Climbing for stone, Water & Bomber for shallow water, Ocean & Admiral for deep ocean. A flying unit cannot end its Turn on a tile its Tribe could not normally enter.
+- The movement budget always uses the unit's `movement` stat — never `waterMovement` — even when starting on water.
+- Flying units gain **+1 sight** and default to attacking after moving.
+
+## After Moving
+
+Once a unit has moved, it enters **moved** mode. What it can do next depends on the unit type:
+
+| Unit        | Attack After Move |
+| ----------- | ----------------- |
+| Caveman     | Yes               |
+| Archer      | Yes               |
+| Guard       | No                |
+| Spearman    | Yes               |
+| Seer        | Yes               |
+| Sprinter    | Yes               |
+| Mage        | No                |
+| Swordsman   | Yes               |
+| Bombardier  | Yes               |
+| Tidebreaker | Yes               |
+
+Guards and Mages cannot attack after moving — plan their positioning carefully.
+
+No unit can [capture](/wiki/mechanics/capture), [explore ruins](/wiki/mechanics/ruins), or [heal](/wiki/units/training-and-healing) after moving. These actions all require the unit to be in **ready** mode.
+
+## Exploration Range
+
+Moving a unit reveals nearby tiles based on its exploration range:
+
+| Unit       | Exploration Range |
+| ---------- | ----------------- |
+| Seer       | 2 tiles           |
+| Sprinter   | 2 tiles           |
+| Most units | 1 tile            |
+
+Seers and Sprinters are the best explorers — their 2 movement combined with 2 exploration range covers ground fast. See [Visibility](/wiki/mechanics/visibility) for more on fog of war, including the +1 sight on stone tiles and for flying units.

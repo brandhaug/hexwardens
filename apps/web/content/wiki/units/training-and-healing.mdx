@@ -1,0 +1,81 @@
+---
+title: 'Training & Healing'
+description: 'How to train units, heal them, and use the Recover self-heal action in Hexwardens.'
+category: units
+order: 3
+---
+
+## Training Units
+
+Units are trained at [Villages](/wiki/buildings/villages) you own. To train a unit:
+
+1. Select a Village tile that belongs to your Tribe
+2. The Village must **not** have a Unit on it already
+3. The Village must have room in its **population cap**
+4. You must have enough **gold** to cover the training cost
+5. For tech-gated units, the required [technology](/wiki/mechanics/technology) must be researched
+
+[Heroes](/wiki/units/unit-types#hero-units) cannot be trained — they are summoned only via the `special_unit` [Village Perk](/wiki/buildings/villages#village-perks) at level 5.
+
+### Training Costs
+
+| Unit                                  | Cost   | Required Tech   |
+| ------------------------------------- | ------ | --------------- |
+| [Caveman](/wiki/units/unit-types)     | 2 gold | None            |
+| [Archer](/wiki/units/unit-types)      | 2 gold | Archer          |
+| [Spearman](/wiki/units/unit-types)    | 2 gold | Spearman        |
+| [Guard](/wiki/units/unit-types)       | 4 gold | Guard           |
+| [Seer](/wiki/units/unit-types)        | 4 gold | Seer            |
+| [Mage](/wiki/units/unit-types)        | 5 gold | Mage            |
+| [Sprinter](/wiki/units/unit-types)    | 6 gold | Sprinter        |
+| [Swordsman](/wiki/units/unit-types)   | 6 gold | Swordsman       |
+| [Bombardier](/wiki/units/unit-types)  | 5 gold | Water & Bomber  |
+| [Tidebreaker](/wiki/units/unit-types) | 7 gold | Ocean & Admiral |
+
+### Population
+
+Each trained unit increases the Village's population by 1. The population cap depends on the [Village level](/wiki/buildings/villages) — a level 1 Village can support 2 units (3 if it is your [Capital](/wiki/buildings/villages#capital)). If the Village is at max population, you cannot train more units there.
+
+Newly trained units start in **ready** mode, meaning they can act immediately on the same turn they are trained.
+
+## Healing Units
+
+Damaged units have two ways to recover health.
+
+### Heal at a Village (1 gold)
+
+Bringing a damaged unit onto a friendly tile within your territory and using **Heal**:
+
+1. Select a tile with your damaged unit
+2. The unit must be in **ready** mode (hasn't moved or acted)
+3. You must have at least **1 gold**
+
+Healing costs **1 gold** and restores the unit to **full health** instantly. After healing, the unit's mode is set to **acted**.
+
+### Recover (self-heal, free)
+
+Any unit can use the **Recover** action on itself to heal a portion of its missing HP without spending gold. Recover is the replacement for the dropped Healer's heal-ally action — every unit now has a baseline self-heal:
+
+- The unit must be in **ready** mode
+- Recovers a fixed amount of HP (capped at max HP)
+- Sets the unit to **acted** mode after use
+- Costs no gold
+
+Recover is the right choice when you want to nurse a frontline unit between engagements without retreating to a Village or paying a heal fee.
+
+## Retiring Units
+
+Once you research **Market**, you can retire your own non-Hero units that are still in **ready** mode. Retiring removes the unit from the board and credits half its training cost back to your treasury (rounded down, minimum 1 gold). Hero units cannot be retired.
+
+Retire is useful for clearing population for a higher-tier unit, repositioning your army's composition, or recovering some gold from a unit that has outlived its strategic role.
+
+## Heal vs. Replace
+
+| Factor       | Heal           | Recover            | Train new unit    |
+| ------------ | -------------- | ------------------ | ----------------- |
+| Cost         | 1 gold         | Free               | 2–7 gold          |
+| Population   | No change      | No change          | +1 to Village     |
+| Availability | Friendly tile  | Anywhere, any unit | Village only      |
+| Turn cost    | Uses full turn | Uses full turn     | Ready immediately |
+
+Recover is cheapest but partial. Heal is full restore but costs gold and ties the unit to your territory. Training a replacement is a last resort once population has the room.

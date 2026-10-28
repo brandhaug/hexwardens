@@ -1,0 +1,31 @@
+{
+	"name": "game-server",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"scripts": {
+		"dev": "wrangler dev --port 8787 --persist-to ../../.wrangler-dev/state --var AUTH_JWT_SECRET:${AUTH_JWT_SECRET:-dev-jwt-secret-please-change-me-12345678} --var HEXWARDENS_DISABLE_RATE_LIMIT:${HEXWARDENS_DISABLE_RATE_LIMIT:-0}",
+		"build": "wrangler deploy --dry-run",
+		"deploy": "wrangler deploy",
+		"test": "vp test run",
+		"db:migrate:local": "wrangler d1 migrations apply hexwardens-db --local --persist-to ../../.wrangler-dev/state",
+		"dev:e2e": "if [ -z \"$HEXWARDENS_WRANGLER_PERSIST_TO\" ]; then export HEXWARDENS_WRANGLER_PERSIST_TO=../../.wrangler-dev/state; fi; wrangler d1 migrations apply hexwardens-db --local --persist-to \"$HEXWARDENS_WRANGLER_PERSIST_TO\" && wrangler dev --port 8787 --persist-to \"$HEXWARDENS_WRANGLER_PERSIST_TO\" --var AUTH_JWT_SECRET:${AUTH_JWT_SECRET:-dev-jwt-secret-please-change-me-12345678} --var HEXWARDENS_DISABLE_RATE_LIMIT:${HEXWARDENS_DISABLE_RATE_LIMIT:-0}",
+		"typecheck": "tsc --noEmit && effect-tsgo diagnostics --project tsconfig.json --strict"
+	},
+	"dependencies": {
+		"@hexwardens/api": "workspace:*",
+		"@hexwardens/db": "workspace:*",
+		"@hexwardens/game-logic": "workspace:*",
+		"drizzle-orm": "catalog:",
+		"effect": "catalog:"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "catalog:",
+		"@effect/vitest": "catalog:",
+		"miniflare": "catalog:",
+		"typescript": "catalog:",
+		"vite-plus": "catalog:",
+		"vitest": "catalog:",
+		"wrangler": "catalog:"
+	}
+}

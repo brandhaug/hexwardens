@@ -1,0 +1,61 @@
+name: Setup
+description: >-
+  Install the Vite+ toolchain (pinned VP_VERSION — it provides the managed
+  Node runtime and the package manager pinned in package.json), restore the
+  pnpm store cache, install dependencies with a frozen lockfile, and optionally
+  cache the Vite Task results.
+
+inputs:
+  cache-task:
+    description: Cache the Vite Task results across runs of this job.
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - name: Install Vite+ (pinned)
+      run: |
+        installer="$(mktemp)"
+        trap 'rm -f "$installer"' EXIT
+        # The public bootstrap changes independently of the pinned CLI release.
+        curl -fsSL https://raw.githubusercontent.com/voidzero-dev/vite-plus/fc287d7b1c0dc008dbc65d1d2b2f51a44e2a5ea4/packages/cli/install.sh -o "$installer" # v1.0.0
+        echo 'e79e48da3b2817c179f581c943e2e1ccf0c690d32d0ed11b8cbfbebd7196918f  '"$installer" | shasum -a 256 -c -
+        VP_VERSION=1.0.0 VP_NODE_MANAGER=yes VP_PM_MANAGER=yes \
+          VP_BIN_DIR="$HOME/.local/share/vite-plus/bin" \
+          VP_DATA_DIR="$HOME/.local/share/vite-plus" \
+          VP_CACHE_DIR="$HOME/.cache/vite-plus" bash "$installer"
+        # Vite+ 1.0 installs managed Node and pnpm shims directly; it no longer
+        # installs Corepack. The packageManager field selects the pnpm version.
+        echo "$HOME/.local/share/vite-plus/bin" >> "$GITHUB_PATH"
+        echo "$HOME/.local/share/vite-plus/fallback-bin" >> "$GITHUB_PATH"
+      shell: bash
+    - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+      with:
+        path: ~/.local/share/pnpm/store
+        key: ${{ runner.os }}-pnpm-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-
+    - run: vp install --frozen-lockfile
+      shell: bash
+    # `actions/cache` restores here and saves in its own post step, so no job
+    # needs a matching save step.
+    - name: Cache Vite Task results
+      if: ${{ inputs.cache-task == 'true' }}
+      uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+      with:
+        # Vite Task reads Vitest's result metadata. Restore it too so a fresh
+        # runner does not invalidate test tasks because that metadata is missing.
+        path: |
+          node_modules/.vite/task-cache
+          node_modules/.vite/vitest
+          apps/*/node_modules/.vite/vitest
+          packages/*/node_modules/.vite/vitest
+          infra/node_modules/.vite/vitest
+        # Task fingerprints already invalidate entries when source/config
+        # inputs change. Keep the archive scoped to this job and lockfile so
+        # a cache from quality/build cannot be mistaken for a test cache, and
+        # dependency changes never fall back to an older dependency graph.
+        key: vite-task-${{ runner.os }}-${{ runner.arch }}-${{ github.workflow }}-${{ github.job }}-${{ strategy.job-index }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.run_id }}-${{ github.run_attempt }}
+        restore-keys: |
+          vite-task-${{ runner.os }}-${{ runner.arch }}-${{ github.workflow }}-${{ github.job }}-${{ strategy.job-index }}-${{ hashFiles('pnpm-lock.yaml') }}-

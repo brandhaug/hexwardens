@@ -1,0 +1,7 @@
+# Replace the SVG Board with React Three Fiber
+
+The match Board will move from the current SVG/HTML 2.5D renderer with emoji Units and TileItems to a direct React Three Fiber scene across `/game`, `/daily`, and `/multiplayer-game`. The replacement keeps the route-facing `Board` API and gameplay contracts intact: `BoardPosition` and game-logic state remain authoritative, Fog of War still withholds hidden Tile data from the renderer, and animation observes state transitions without delaying authoritative state updates.
+
+There will not be a parallel long-lived 2D fallback renderer. The first 3D implementation uses procedural low-poly tabletop miniatures and shared/instanced hex-prism terrain through a web-owned asset registry and axial-to-world projection, with GLB assets and richer terrain texturing able to replace registry entries later. Emoji presentation mappings are removed rather than preserved for backwards compatibility because the project has no production environment requiring legacy fallback behavior.
+
+Considered: shipping the 3D Board behind `?renderer=3d` while the SVG Board remained default, or adopting one of the reference hex-grid repositories as a runtime dependency. The renderer switch was rejected because the goal is a full visual replacement and keeping both surfaces would preserve emoji-era contracts; external grid engines were rejected because the repo already has canonical game-logic Board coordinates and only needs a small tested Three.js projection layer.

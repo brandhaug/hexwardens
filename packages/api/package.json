@@ -1,0 +1,29 @@
+{
+	"name": "@hexwardens/api",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		".": "./src/index.ts",
+		"./auth": "./src/auth.ts",
+		"./errors": "./src/errors.ts",
+		"./leaderboard": "./src/leaderboard.ts",
+		"./profile": "./src/profile.ts",
+		"./achievements": "./src/achievements.ts",
+		"./cosmetics": "./src/cosmetics.ts",
+		"./daily": "./src/daily.ts",
+		"./presence": "./src/presence.ts",
+		"./health": "./src/health.ts"
+	},
+	"scripts": {
+		"typecheck": "tsc --noEmit && effect-tsgo diagnostics --project tsconfig.json --strict"
+	},
+	"dependencies": {
+		"@hexwardens/db": "workspace:*",
+		"@hexwardens/game-logic": "workspace:*",
+		"effect": "catalog:"
+	},
+	"devDependencies": {
+		"typescript": "catalog:"
+	}
+}

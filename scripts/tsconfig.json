@@ -1,0 +1,4 @@
+{
+	"extends": "../infra/tsconfig.json",
+	"include": ["./alchemy-stage.ts", "./d1-backup.ts"]
+}

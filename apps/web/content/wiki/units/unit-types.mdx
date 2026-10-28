@@ -1,0 +1,92 @@
+---
+title: 'Unit Types'
+description: 'All unit types in Hexwardens — general units, hero units, stats, passives, and tactical roles.'
+category: units
+order: 1
+---
+
+There are 10 general unit types and 9 tribe-specific [hero units](#hero-units) in Hexwardens. General units are [trained at villages](/wiki/units/training-and-healing) once their [technology](/wiki/mechanics/technology) requirements are met. Heroes are summoned only through a [Village Perk](/wiki/buildings/villages#village-perks) and cannot be trained with gold.
+
+## General Units
+
+Each card shows the unit's stats — ❤️ HP, ⚔️ ATK, 🛡️ DEF, 👣 MOV, 🎯 RNG, 💰 Cost — along with combat tags, passive abilities, and the [technology](/wiki/mechanics/technology) required to train it.
+
+<WikiUnitCodex />
+
+A capturing unit must be in **ready** mode on the [Village](/wiki/buildings/villages) tile and stays locked there until the start of its Tribe's next Turn — see [Capture](/wiki/mechanics/capture) for the full two-step flow.
+
+### Passive Abilities
+
+- **Brace** (Spearman) — Deals 1.5x damage when counter-attacking cavalry (Seer, Sprinter)
+- **Charge** (Sprinter) — +5 ATK when attacking after moving
+- **Retreat** (Seer) — After attacking and surviving, may make one follow-up move but cannot attack again that turn
+- **Splash** (Bombardier, Mage) — Each hit also deals reduced damage to enemy units adjacent to the target tile
+- **Tide Command** (Tidebreaker) — Strong on water and can attack after moving there
+
+Two further passives are wired into the combat and movement engine but are not yet assigned to any unit. They land when the relevant unit is added:
+
+- **Knockback** — Pushes the surviving target one tile away from the attacker. Blocked tiles deal +5 damage in place; non-naval units pushed onto water or ocean drown. Pushed (or drowned) targets cannot counter-attack. See [Combat](/wiki/units/combat#knockback).
+- **Flying** — In transit, every tile costs 1 movement and tech gates are ignored. The destination tile must still satisfy the normal gates ([Climbing](/wiki/mechanics/technology) for stone, Water & Bomber for shallow water, Ocean & Admiral for deep ocean). Flying units gain +1 sight and default to attacking after moving. See [Movement](/wiki/mechanics/movement#flying).
+
+## Unit Roles
+
+**Caveman** ⚔️ — The versatile frontline unit. Cheap at 2 gold with no tech requirement, making them the backbone of any army early on.
+
+**Archer** 🏹 — Ranged attacker with 2-tile range. Strikes from behind friendly lines and avoids [counter-attacks](/wiki/units/combat) against melee defenders entirely. Requires Archer.
+
+**Guard** 🛡️ — The tankiest general unit with high HP and defense. Cannot attack after moving — must be in ready mode to fight. Ideal for holding villages and key positions. Requires Guard.
+
+**Spearman** 🔱 — Anti-cavalry specialist. Brace passive punishes Seers, Sprinters, and Tidebreakers with 1.5x counter-attack damage. Requires Spearman.
+
+**Seer** 🐎 — Fast melee unit with 2 movement and 2 exploration range. After attacking and surviving, it enters retreat mode: one follow-up move is available, then the unit is spent. With Scout/Healer culled, the Seer is now the workhorse of early scouting.
+
+**Sprinter** ⚜️ — Elite cavalry. Charge adds +5 ATK when attacking after moving, and a kill leaves the Sprinter able to attack again without moving again. Devastating on the offense but expensive. Requires Sprinter.
+
+**Mage** 💥 — Siege unit with long range, heavy damage, and reduced splash damage to adjacent enemies. Cannot attack after moving, so positioning matters. Requires Mage (formerly Engineering).
+
+**Swordsman** 🗡️ — Heavy infantry unlocked by Swordsman (formerly Smithing). Strong against melee defenders and built to contest fortified ground.
+
+**Bombardier** 🧨 — Water-branch ranged unit unlocked by Water & Bomber. Becomes a tougher bombship-style unit on water with stronger splash attacks. Has innate ocean traversal — no Ocean & Admiral required.
+
+**Tidebreaker** ⚓ — Deep-water unit unlocked by Ocean & Admiral. Becomes a battleship-style unit on water with strong naval combat stats and the **Tide Command** passive (attack after moving onto water). Cavalry-class — vulnerable to Spearman Brace.
+
+## Hero Units
+
+Each [tribe](/wiki/tribes/all-tribes) has a unique Hero unit (shown above in the Heroes section). Heroes are powerful units with fixed stats — they do **not** level up through play.
+
+### Summoning a Hero
+
+A Hero is **not** trainable with gold. The owning Player summons their Tribe's Hero by choosing the `special_unit` [Village Perk](/wiki/buildings/villages#village-perks) when one of their Villages levels up to **level 5**. The perk consumes that level-up's choice and is the only level at which `special_unit` is offered.
+
+- If a Player picks any other Perk at the level-5 transition, that Village will never spawn a Hero.
+- Captured Villages keep the Perks chosen by their previous owner. A captor cannot retroactively summon a Hero from a captured level-5+ Village.
+- Only **one Hero** can exist on the board per Tribe at a time. If your Hero dies, you can spend a future level-5 Perk slot from another Village to summon a new one.
+
+### Hero Death
+
+When a Hero is killed, all other units of that Tribe receive a **morale loss** debuff (−1 ATK for 2 turns). Protect your Hero — their death weakens your entire army.
+
+### Hero Roles
+
+| Tribe      | Hero           | Role              | Ability                                      |
+| ---------- | -------------- | ----------------- | -------------------------------------------- |
+| Barbarians | Berserker      | Momentum bruiser  | Gains +2 ATK for each kill made that turn    |
+| Rogues     | Shogun         | Formation leader  | Adjacent allies gain +3 ATK                  |
+| Druids     | Wolf           | Terrain ambusher  | Deals 1.5x damage from jungle and forest     |
+| Orcs       | Orc Raider     | Sustained duelist | Heals 5 HP after kills                       |
+| Wraiths    | Black Knight   | Debuffer          | Attacks apply −3 ATK for 2 turns             |
+| Engineers  | Clanker        | Defensive anchor  | Adjacent allies gain +5 DEF                  |
+| Templars   | Paladin        | Line sniper       | Ignores defense and pierces lined-up enemies |
+| Skeletons  | Skeleton Golem | Evasive raider    | Dodges the first attack received each turn   |
+| Frostkin   | Frostlord      | Area controller   | Nearby enemies lose 1 movement               |
+
+## Veterancy
+
+All units gain veterancy bonuses through kills. Every 2 kills, a unit receives an alternating bonus:
+
+- **2 kills** → +1 ATK
+- **4 kills** → +2 max HP
+- **6 kills** → +1 ATK
+- And so on, alternating between ATK and HP bonuses
+
+Heroes do **not** gain veterancy or kill-based stat tiers — their stats are fixed.

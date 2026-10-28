@@ -1,0 +1,107 @@
+---
+title: 'Technology'
+description: 'The Hexwardens six-Path Tech Tree — five elemental Paths, the Mobility Path, Masteries, and per-Village research scaling.'
+category: mechanics
+order: 5
+---
+
+Tech research opens unit training, terrain interactions, building upgrades, and Mastery passives. The tree is structured as **six [Tech Paths](/wiki/mechanics/technology#tech-paths)** in line with Hexwardens' canonical shape.
+
+## Research
+
+Research is performed at [Villages](/wiki/buildings/villages) you own. To start researching:
+
+1. Select a Village tile that belongs to your Tribe
+2. Choose an available technology from the research menu
+3. You must have enough **gold** to cover the cost
+4. Only **one technology** can be researched at a time per Player
+
+Most technologies complete instantly. **Masteries** take a full Turn to research, and you cannot start any other research while a Mastery is in progress — the cost is the opportunity, not just the gold. Research progress ticks down by 1 at the end of each of your Turns.
+
+### Per-Village research cost scaling
+
+Research cost is the node's base cost **plus +1 gold for every Village a Tribe owns beyond the first**. Expanding gives more income and training sites, but it also makes future research progressively more expensive — every Village is a step on the cost curve. The scaling encourages players to weigh territory expansion against research efficiency, and it is the main reason why two-Village pushes can be more economical than chain-conquest sprawl.
+
+## Tech Tree
+
+Drag to pan, pinch to zoom.
+
+<WikiTechTree />
+
+## Tech Paths
+
+There are six Paths.
+
+### Mobility (utility, four linear nodes)
+
+`Climbing → Road & Seaports → Market → Mobility Mastery`
+
+The Mobility Path is purely utility. It opens stone traversal, declares the Roads / Seaports / Market [utility buildings](/wiki/buildings/utility-buildings), and ends in **Mobility Mastery**, a passive that grants **+1 movement to all units**.
+
+### The five elemental Paths
+
+Each elemental Path follows the same shape: **basic Tech → economic-secondary branch → military-secondary branch → Mastery tip**.
+
+| Path    | Basic  | Econ Secondary          | Military Secondary               | Mastery         |
+| ------- | ------ | ----------------------- | -------------------------------- | --------------- |
+| Water   | Pearl  | Coral / Dock            | Water & Bomber → Ocean & Admiral | Water Mastery   |
+| Plants  | Fruit  | Farming → Windmill      | Guard → City Wall                | Plant Mastery   |
+| Earth   | Meat   | Lumber Mill → Watermill | Archer → Mage                    | Earth Mastery   |
+| Fire    | Cheese | Camp → Stables          | Seer → Sprinter                  | Fire Mastery    |
+| Mineral | Gem    | Mine → Blacksmith       | Spearman → Swordsman             | Mineral Mastery |
+
+The five elemental Paths align 1:1 with the [primary/secondary buildings](/wiki/buildings/primary-buildings) and the [Large upgrades](#masteries-and-large-upgrades).
+
+## Masteries and Large Upgrades
+
+Each Mastery grants a passive buff and unlocks the corresponding **Large** upgrade for the Path's economic-tier-2 building (see [secondary buildings](/wiki/buildings/secondary-buildings#large-upgrades)). Mobility Mastery is the only Mastery with no Large upgrade — its payoff is the +1 movement passive.
+
+| Mastery          | Passive (sample)          | Large Upgrade    |
+| ---------------- | ------------------------- | ---------------- |
+| Mobility Mastery | +1 movement to all units  | —                |
+| Water Mastery    | Water-branch buffs        | Large Dock       |
+| Plant Mastery    | Plant-branch buffs        | Large Windmill   |
+| Earth Mastery    | +1 sight for ranged units | Large Watermill  |
+| Fire Mastery     | Fire-branch buffs         | Large Stables    |
+| Mineral Mastery  | Mineral-branch buffs      | Large Blacksmith |
+
+## Unit Unlocks
+
+Many technologies unlock new [unit types](/wiki/units/unit-types) for training:
+
+| Technology       | Unlocks     |
+| ---------------- | ----------- |
+| Archer           | Archer      |
+| Guard            | Guard       |
+| Seer             | Seer        |
+| Spearman         | Spearman    |
+| Sprinter (tech)  | Sprinter    |
+| Mage (tech)      | Mage        |
+| Swordsman (tech) | Swordsman   |
+| Water & Bomber   | Bombardier  |
+| Ocean & Admiral  | Tidebreaker |
+
+Cavemen are available from the start without any technology.
+
+The previously available **Healer**, **Shaman**, **Giant**, and **Scout** units are removed. The Healer's role is filled by the [Recover](/wiki/units/training-and-healing#recover-self-heal-free) self-heal action available to every Unit; the Scout's exploration role moves to the Seer.
+
+## Defensive Unlocks
+
+City Wall is a Plants-Path defensive technology. Once researched, units defending one of your Village tiles gain **+5 DEF**.
+
+## Tribe-Aligned Technologies
+
+Each Tribe has technologies that align with its strengths. Researching an aligned tech awards a small bonus.
+
+## Hero Summoning
+
+Heroes are **not** unlocked through tech. They are summoned only by choosing the `special_unit` [Village Perk](/wiki/buildings/villages#village-perks) at the level-5 transition of a Village you own — see [ADR-0001](https://github.com/brandhaug/hexwardens/blob/master/docs/adr/0001-hero-as-level-up-perk.md) for the design rationale.
+
+## Strategic Considerations
+
+The branching tree forces meaningful choices — you cannot rush everything at once. Key trade-offs:
+
+- **Opening basic techs are cheap and instant** — there's no reason not to take one early.
+- **Per-Village scaling means territory has a hidden tech tax.** A 5-Village empire pays +4 gold on every research; budget accordingly.
+- **Masteries take a full Turn.** Time them for a quiet Turn — you give up all other research that Turn.
+- **Large upgrades double back into Path Masteries.** A Mastery is both a passive buff and a building unlock, so two Path Masteries unlock 10 XP of secondary growth.

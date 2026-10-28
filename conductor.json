@@ -1,0 +1,6 @@
+{
+	"scripts": {
+		"run": "scripts/worktrees/run.sh",
+		"setup": "ROOT_PATH=\"${CONDUCTOR_ROOT_PATH:-}\" WORKSPACE_PATH=\"${CONDUCTOR_WORKSPACE_PATH:-$PWD}\" bash \"${CONDUCTOR_WORKSPACE_PATH:-$PWD}/scripts/worktrees/setup.sh\""
+	}
+}

@@ -1,0 +1,29 @@
+{
+	"name": "@hexwardens/db",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"exports": {
+		"./schema": "./src/schema.ts",
+		"./client": "./src/client.ts",
+		"./effect": "./src/effect.ts"
+	},
+	"scripts": {
+		"db:generate": "drizzle-kit generate && pnpm run db:sync",
+		"db:sync": "node scripts/sync-d1-migrations.ts",
+		"db:migrate:remote": "wrangler d1 migrations apply hexwardens-db --remote",
+		"db:studio": "drizzle-kit studio",
+		"typecheck": "tsc --noEmit && effect-tsgo diagnostics --project tsconfig.json --strict"
+	},
+	"dependencies": {
+		"@hexwardens/game-logic": "workspace:*",
+		"drizzle-orm": "catalog:",
+		"effect": "catalog:"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "catalog:",
+		"drizzle-kit": "catalog:",
+		"typescript": "catalog:",
+		"wrangler": "catalog:"
+	}
+}

@@ -1,0 +1,756 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/cinzel';
+@import '@fontsource-variable/crimson-pro';
+@plugin '@tailwindcss/typography';
+/* Tailwind v4 auto-scans only this workspace; explicitly include game-logic
+   so utility classes referenced there (e.g. tribeToColor) aren't tree-shaken. */
+@source '../../../packages/game-logic/src/**/*.{ts,tsx}';
+
+@custom-variant dark (&:where(.dark, .dark *));
+/* Coarse pointer (touch) targets — used to grow controls like slider thumbs
+   that are precise on mouse but easy to miss on a fingertip. `fine` is the
+   inverse and lets us reserve dense, mouse-only layouts (e.g. the in-game
+   menu's three-column volume mixer) for pointer hardware. */
+@custom-variant coarse (@media (pointer: coarse));
+@custom-variant fine (@media (pointer: fine));
+
+@theme {
+	--font-sans:
+		'Crimson Pro Variable', Georgia, 'Times New Roman', serif,
+		'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+html,
+body {
+	@apply bg-background;
+
+	@media (prefers-color-scheme: dark) {
+		color-scheme: dark;
+	}
+}
+
+html {
+	scrollbar-gutter: stable;
+	/* iOS Safari auto-inflates text in landscape; lock it so the HUD doesn't
+	   reflow when the user rotates the device. */
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+/* Player-opted-in reduced motion: kill decorative animations and the
+   *movement* half of transitions, but keep state-change feedback (color,
+   border, focus rings) responsive. Stronger than
+   `prefers-reduced-motion: reduce` because it ignores the system pref
+   entirely — a player who likes their laptop snappy but wants the game
+   calm can opt in here.
+
+   Why not a blanket `transition-duration: 0.001ms`? It strips focus-visible
+   ring fades, hover color cross-fades, and slider thumb settling — all
+   state-change feedback the a11y goal *wants* preserved. Instead we
+   override `transition-property` so only `transform`/`opacity` (motion)
+   are short-circuited; color/background/border/box-shadow transitions
+   still play at their authored duration. */
+html[data-reduced-motion='true'] *,
+html[data-reduced-motion='true'] *::before,
+html[data-reduced-motion='true'] *::after {
+	animation-duration: 0.001ms !important;
+	animation-iteration-count: 1 !important;
+	transition-property:
+		background-color, color, border-color, box-shadow, outline-color, fill,
+		stroke, opacity !important;
+}
+
+body {
+	/* Mobile-game posture: kill the iOS double-tap "callout" and the gray
+	   tap-flash, then prevent the rubber-band overscroll that gives away
+	   "this is a web page" the moment you start panning the board. */
+	-webkit-tap-highlight-color: transparent;
+	-webkit-touch-callout: none;
+	overscroll-behavior: none;
+}
+
+/* Routes that own the full viewport (match, lobby) opt into immersive
+   posture: no scrollbar gutter (the board canvas absorbs all gestures),
+   no chrome selection, no overflow. */
+body:has([data-route='immersive']) {
+	overflow: hidden;
+	overscroll-behavior: none;
+	scrollbar-gutter: auto;
+}
+
+/* The root reserves a `scrollbar-gutter: stable` strip on every page. On
+   immersive routes the body never scrolls (an inner section does), so that
+   reserved strip just leaves an empty gap to the right of the inner
+   scrollbar. Drop it here so the scrollbar sits flush against the viewport
+   edge. */
+html:has([data-route='immersive']) {
+	scrollbar-gutter: auto;
+}
+
+/* Chrome surfaces (HUD, dock, panels) should feel like sculpted controls,
+   not text. No drag-select, no callout, no tap flash. Inputs and prose
+   opt back in via `.selectable` or by being inside `[data-selectable]`. */
+.game-chrome,
+[data-game-chrome] {
+	-webkit-user-select: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+	touch-action: manipulation;
+}
+
+.selectable {
+	-webkit-user-select: text;
+	user-select: text;
+}
+
+/* iOS zooms inputs <16px. Force the floor everywhere — labels stay small
+   via `text-xs`, inputs land at 16px no matter what. */
+input,
+select,
+textarea {
+	font-size: max(16px, 1rem);
+}
+
+/* Disable the synthetic 300ms click delay & double-tap zoom on every
+   interactive surface — `manipulation` keeps pan/zoom on the canvas. */
+button,
+[role='button'],
+a,
+label,
+input,
+select,
+textarea {
+	touch-action: manipulation;
+}
+
+/* The app shell is always dark (`<html className='dark'>` in __root.tsx), so
+   dark values are the single source of truth on :root. The `dark` class stays
+   on <html> so existing Tailwind `dark:` variants (button/tabs/input/wiki
+   prose, tribe-badge palette swaps) keep targeting the correct branch. */
+:root {
+	--radius: 0.5rem;
+	/* Weathered teal chrome, match gold accents, parchment text */
+	--background: oklch(0.3 0.04 222);
+	--foreground: oklch(0.97 0.012 100);
+	--card: oklch(0.42 0.058 218);
+	--card-foreground: oklch(0.97 0.012 100);
+	--popover: oklch(0.4 0.06 218);
+	--popover-foreground: oklch(0.97 0.012 100);
+	--primary: oklch(0.81 0.144 80);
+	--primary-foreground: oklch(0.28 0.072 55);
+	--secondary: oklch(0.4 0.05 218);
+	--secondary-foreground: oklch(0.96 0.018 100);
+	--muted: oklch(0.36 0.045 220);
+	--muted-foreground: oklch(0.82 0.035 215);
+	--accent: oklch(0.48 0.06 215);
+	--accent-foreground: oklch(0.97 0.012 100);
+	--destructive: oklch(0.65 0.2 22);
+	--success: oklch(0.72 0.17 145);
+	--border: oklch(0.85 0.04 215 / 20%);
+	--input: oklch(0.85 0.04 215 / 22%);
+	--ring: oklch(0.81 0.14 80 / 60%);
+	--chart-1: oklch(0.81 0.14 80);
+	--chart-2: oklch(0.62 0.09 215);
+	--chart-3: oklch(0.5 0.08 222);
+	--chart-4: oklch(0.68 0.13 60);
+	--chart-5: oklch(0.42 0.06 220);
+	--sidebar: oklch(0.42 0.058 218);
+	--sidebar-foreground: oklch(0.97 0.012 100);
+	--sidebar-primary: oklch(0.81 0.144 80);
+	--sidebar-primary-foreground: oklch(0.28 0.072 55);
+	--sidebar-accent: oklch(0.48 0.06 215);
+	--sidebar-accent-foreground: oklch(0.97 0.012 100);
+	--sidebar-border: oklch(0.85 0.04 215 / 20%);
+	--sidebar-ring: oklch(0.81 0.14 80 / 60%);
+
+	/* Hex tile state indicators */
+	--hex-selected: oklch(0.81 0.144 80);
+	--hex-selected-fill: oklch(0.81 0.144 80 / 22%);
+	--hex-attackable: oklch(0.65 0.2 22);
+	--hex-attackable-fill: oklch(0.65 0.2 22 / 18%);
+	--hex-moveable: oklch(0.85 0.13 88);
+	--hex-moveable-fill: oklch(0.85 0.13 88 / 18%);
+	--hex-perimeter: oklch(0.72 0.18 148);
+
+	/* Board art surface tokens — weathered teal stone + mist. */
+	--board-pillar: oklch(0.34 0.045 220);
+	--fog-surface: oklch(0.3 0.04 222);
+	--fog-pillar: oklch(0.22 0.035 222);
+
+	/* Chunky game-button chrome — the three press-ramp families used by
+	   the End Turn button, the action dock, the menu button, and the main
+	   menu CTAs. sRGB hex equivalents are kept in comments so reviewers can
+	   match against DESIGN.md and older screenshots; OKLch is authoritative
+	   (per DESIGN.md "Authoritative values are stored in OKLch"). */
+
+	/* Gold ramp — match-gold CTA (End Turn, primary main-menu, action). */
+	--gold-top: oklch(0.876 0.136 85.2); /* #ffcf63 */
+	--gold-bottom: oklch(0.76 0.15 74.8); /* #e8a127 */
+	--gold-top-hover: oklch(0.896 0.121 87.4); /* #ffd87a */
+	--gold-bottom-hover: oklch(0.792 0.15 77.3); /* #f0ad34 */
+	--gold-bevel: oklch(0.518 0.121 52.4); /* #9d5117 */
+	--gold-text: oklch(0.321 0.065 59.6); /* #4b2a0b */
+	--gold-bright: oklch(0.883 0.145 89); /* #ffd35a — coin/accent highlight */
+	--gold-edge: oklch(0.977 0.037 95.4); /* #fff8dc — cream border */
+	--gold-cast: oklch(0.321 0.065 59.6 / 24%); /* rgba(43,26,8,0.24) */
+	--gold-cast-strong: oklch(0.321 0.065 59.6 / 32%); /* rgba(43,26,8,0.32) */
+
+	/* Ember ramp — destructive / confirm (Confirm? End Turn, quit). */
+	--ember-top: oklch(0.688 0.16 28.3); /* #ed6e60 */
+	--ember-bottom: oklch(0.568 0.172 28.8); /* #c84236 */
+	--ember-top-hover: oklch(0.709 0.15 27.3); /* #f0786c */
+	--ember-bottom-hover: oklch(0.591 0.172 28.5); /* #d04a3e */
+	--ember-bevel: oklch(0.391 0.124 30); /* #7a2218 */
+	--ember-base: oklch(0.634 0.174 28.4); /* #e0574a — dark fallback */
+	--ember-cast: oklch(0.391 0.124 30 / 34%); /* rgba(80,16,12,0.34) */
+
+	/* Teal ramp — default chrome (menu trigger, teal action, secondary CTA). */
+	--teal-top: oklch(0.625 0.11 217.5); /* #0d97b3 */
+	--teal-top-sm: oklch(0.586 0.104 219.3); /* #0c8aa6 — menu trigger */
+	--teal-bottom: oklch(0.468 0.082 217); /* #076578 */
+	--teal-top-hover: oklch(0.667 0.117 217.3); /* #10a5c3 */
+	--teal-top-sm-hover: oklch(0.634 0.112 217.9); /* #0f9ab7 */
+	--teal-bottom-hover: oklch(0.509 0.088 214.9); /* #087285 */
+	--teal-bevel: oklch(0.379 0.071 227.1); /* #06495f */
+	--teal-card: oklch(0.514 0.091 219.6); /* #0a738b — same as --card */
+	--teal-deep: oklch(0.397 0.068 219.8); /* #0a4f60 — chip backdrop */
+	--teal-edge: oklch(0.413 0.077 226.2); /* #05536b — border stroke */
+	--teal-mist: oklch(0.932 0.027 205.4); /* #d5eef1 — muted-foreground */
+	--teal-cyan: oklch(0.975 0.022 211); /* #e7fbff — teal-button text */
+	--teal-cast: oklch(0.379 0.071 227.1 / 24%); /* rgba(0,42,54,0.24) */
+	--teal-cast-strong: oklch(0.379 0.071 227.1 / 32%); /* rgba(0,42,54,0.32) */
+
+	/* Resource chip (gold-coin chip) — gradient is its own duo. */
+	--chip-top: oklch(0.505 0.056 205.2); /* #3a6e74 */
+	--chip-bottom: oklch(0.391 0.051 208.7); /* #1f4d54 */
+	--chip-cast: oklch(
+		0.245 0.045 222.3 / 45%
+	); /* rgba(0,37,48,0.45) — chip bevel cast */
+	--chip-cast-soft: oklch(
+		0.245 0.045 222.3 / 32%
+	); /* rgba(0,37,48,0.32) — menu trigger ambient */
+
+	/* HUD chrome ambient shadows (hud-edge-top / -bottom). */
+	--hud-shadow-top: oklch(0.379 0.071 227.1 / 28%); /* rgba(0,42,54,0.28) */
+	--hud-shadow-bottom: oklch(0.379 0.071 227.1 / 26%); /* rgba(0,42,54,0.26) */
+
+	/* Victory chip — uses success hue, distinct from chrome. */
+	--victory-border: oklch(0.708 0.124 152); /* #5fb77a — hex-perimeter */
+	--victory-bg: oklch(0.418 0.087 154.2); /* #1c5a36 */
+	--victory-text: oklch(0.953 0.037 150.3); /* #dff7e3 */
+}
+
+@theme inline {
+	--radius-sm: calc(var(--radius) - 4px);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-lg: var(--radius);
+	--radius-xl: calc(var(--radius) + 4px);
+	--radius-2xl: calc(var(--radius) * 1.8);
+	--radius-3xl: calc(var(--radius) * 2.2);
+	--radius-4xl: calc(var(--radius) * 2.6);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-popover: var(--popover);
+	--color-popover-foreground: var(--popover-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-destructive: var(--destructive);
+	--color-success: var(--success);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-chart-1: var(--chart-1);
+	--color-chart-2: var(--chart-2);
+	--color-chart-3: var(--chart-3);
+	--color-chart-4: var(--chart-4);
+	--color-chart-5: var(--chart-5);
+	--color-sidebar: var(--sidebar);
+	--color-sidebar-foreground: var(--sidebar-foreground);
+	--color-sidebar-primary: var(--sidebar-primary);
+	--color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+	--color-sidebar-accent: var(--sidebar-accent);
+	--color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-ring: var(--sidebar-ring);
+	--color-hex-selected: var(--hex-selected);
+	--color-hex-selected-fill: var(--hex-selected-fill);
+	--color-hex-attackable: var(--hex-attackable);
+	--color-hex-attackable-fill: var(--hex-attackable-fill);
+	--color-hex-moveable: var(--hex-moveable);
+	--color-hex-moveable-fill: var(--hex-moveable-fill);
+	--color-hex-perimeter: var(--hex-perimeter);
+	--color-board-pillar: var(--board-pillar);
+	--color-fog-surface: var(--fog-surface);
+	--color-fog-pillar: var(--fog-pillar);
+
+	/* Chunky-button chrome — surfaced as Tailwind colors so the chunky
+	   gold/teal/ember chrome can be reached with utilities like
+	   `from-gold-top`, `border-gold-edge`, `text-teal-cyan`. */
+	--color-gold-top: var(--gold-top);
+	--color-gold-bottom: var(--gold-bottom);
+	--color-gold-top-hover: var(--gold-top-hover);
+	--color-gold-bottom-hover: var(--gold-bottom-hover);
+	--color-gold-bevel: var(--gold-bevel);
+	--color-gold-text: var(--gold-text);
+	--color-gold-bright: var(--gold-bright);
+	--color-gold-edge: var(--gold-edge);
+	--color-gold-cast: var(--gold-cast);
+	--color-gold-cast-strong: var(--gold-cast-strong);
+
+	--color-ember-top: var(--ember-top);
+	--color-ember-bottom: var(--ember-bottom);
+	--color-ember-top-hover: var(--ember-top-hover);
+	--color-ember-bottom-hover: var(--ember-bottom-hover);
+	--color-ember-bevel: var(--ember-bevel);
+	--color-ember-base: var(--ember-base);
+	--color-ember-cast: var(--ember-cast);
+
+	--color-teal-top: var(--teal-top);
+	--color-teal-top-sm: var(--teal-top-sm);
+	--color-teal-bottom: var(--teal-bottom);
+	--color-teal-top-hover: var(--teal-top-hover);
+	--color-teal-top-sm-hover: var(--teal-top-sm-hover);
+	--color-teal-bottom-hover: var(--teal-bottom-hover);
+	--color-teal-bevel: var(--teal-bevel);
+	--color-teal-card: var(--teal-card);
+	--color-teal-deep: var(--teal-deep);
+	--color-teal-edge: var(--teal-edge);
+	--color-teal-mist: var(--teal-mist);
+	--color-teal-cyan: var(--teal-cyan);
+	--color-teal-cast: var(--teal-cast);
+	--color-teal-cast-strong: var(--teal-cast-strong);
+
+	--color-chip-top: var(--chip-top);
+	--color-chip-bottom: var(--chip-bottom);
+	--color-chip-cast: var(--chip-cast);
+	--color-chip-cast-soft: var(--chip-cast-soft);
+
+	--color-hud-shadow-top: var(--hud-shadow-top);
+	--color-hud-shadow-bottom: var(--hud-shadow-bottom);
+
+	--color-victory-border: var(--victory-border);
+	--color-victory-bg: var(--victory-bg);
+	--color-victory-text: var(--victory-text);
+
+	--font-heading: 'Cinzel Variable', serif;
+}
+
+@layer base {
+	* {
+		@apply border-border outline-ring/50;
+	}
+	body {
+		@apply bg-background text-foreground;
+	}
+	html {
+		@apply font-sans;
+	}
+	button:not(:disabled),
+	[role='button']:not(:disabled) {
+		cursor: pointer;
+	}
+}
+
+@keyframes timer-pulse {
+	0%,
+	100% {
+		opacity: 1;
+		filter: drop-shadow(0 0 2px currentColor);
+	}
+	50% {
+		opacity: 0.72;
+		filter: drop-shadow(0 0 8px currentColor);
+	}
+}
+
+/* Board art (PRD #159) — motion is opt-in via `motion-safe:` Tailwind variant
+   so anything we apply directly here also respects user preference. */
+@keyframes hex-ring-rotate {
+	to {
+		stroke-dashoffset: -36;
+	}
+}
+
+@keyframes capital-glow {
+	0%,
+	100% {
+		filter: drop-shadow(0 0 2px var(--color-primary))
+			drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+	}
+	50% {
+		filter: drop-shadow(0 0 8px var(--color-primary))
+			drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+	}
+}
+
+@keyframes hero-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.55;
+	}
+}
+
+.hex-ring-spin {
+	stroke-dashoffset: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+	.hex-ring-spin {
+		animation: hex-ring-rotate 4s linear infinite;
+	}
+}
+
+/* Elevated tiles (mountains, capitals) get a soft cast shadow + depth lift. */
+.hex-elevated {
+	filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.32));
+}
+/* Capitals: single drop-shadow filter pass for the dark cast; the gold halo
+   is rendered by a sibling .hex-capital-halo using box-shadow so the GPU
+   doesn't run two sequential filter passes per capital tile. */
+.hex-capital {
+	filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.28));
+}
+.hex-capital-halo {
+	box-shadow: 0 0 6px 2px oklch(0.81 0.144 80 / 0.22);
+}
+
+/* Idle (non-elevated) tiles get a soft ambient occlusion shadow. */
+.hex-elevated,
+button[data-elevated='true'] {
+	transition: filter 200ms ease-out;
+}
+
+/*
+ * Moment-feedback callouts. Tile-anchored callouts (damage / heal / gold
+ * numerals, defeat and capture plaques) rise off their tile and fade once;
+ * the turn banner eases down, holds, and fades. Both animate on
+ * transform/opacity only so they composite cheaply and don't trip layout,
+ * and both ease out without bounce — Polytopia restraint, not juice.
+ * Reduced-motion variants collapse the movement to a static fade — the
+ * textual feedback is preserved, the motion is not. Elements are centered
+ * by their containers (drei <Html center> / flex), so keyframes only ever
+ * move along Y.
+ */
+@keyframes moment-callout {
+	0% {
+		opacity: 0;
+		transform: translateY(4px) scale(0.92);
+	}
+	16% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+	72% {
+		opacity: 1;
+		transform: translateY(-14px);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-22px);
+	}
+}
+
+@keyframes moment-callout-reduced {
+	0% {
+		opacity: 0;
+	}
+	30% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+@keyframes moment-banner {
+	0% {
+		opacity: 0;
+		transform: translateY(-8px);
+	}
+	10% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	84% {
+		opacity: 1;
+		transform: translateY(0);
+	}
+	100% {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+}
+
+@keyframes moment-banner-reduced {
+	0% {
+		opacity: 0;
+	}
+	30% {
+		opacity: 1;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.animate-moment-callout {
+	/* Duration pairs with FULL_MOTION_CALLOUT_DURATION_MS (900ms) so the
+	   element finishes its fade before useMomentFeedback unmounts it. */
+	animation: moment-callout 850ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	will-change: transform, opacity;
+}
+
+.animate-moment-banner {
+	/* Duration pairs with FULL_MOTION_BANNER_DURATION_MS (2200ms). */
+	animation: moment-banner 2150ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.animate-moment-callout {
+		animation-name: moment-callout-reduced;
+		animation-duration: 200ms;
+	}
+	/* The banner is informational text — reduced motion swaps the slide
+	   for a crossfade but keeps the hold long enough to read
+	   (pairs with REDUCED_MOTION_BANNER_DURATION_MS). */
+	.animate-moment-banner {
+		animation-name: moment-banner-reduced;
+		animation-duration: 1150ms;
+	}
+}
+
+/* Class-based fallback for tooling that strips the media query (e.g. tests) */
+.animate-moment-callout-reduced {
+	animation: moment-callout-reduced 200ms ease-out forwards;
+}
+
+.animate-moment-banner-reduced {
+	animation: moment-banner-reduced 1150ms ease-out forwards;
+}
+
+/*
+ * Landing-hero entrance. One quiet, orchestrated first-load reveal of the
+ * hero chrome cluster — logo → eyebrow → title → tagline → CTA — each
+ * easing up a few px and fading in, staggered by tens of ms. The `brand`
+ * register permits an ambitious first-load on the hero, but restraint is
+ * the benchmark (Polytopia-like): this is one well-timed sequence, not
+ * scattered juice. Curve is ease-out-expo — fast lift, soft settle, no
+ * bounce / spring / overshoot. Transform+opacity only so it composites
+ * cheaply and never trips layout.
+ *
+ * IMPORTANT: this is a pure CSS entrance that *always* plays on mount —
+ * not a JS/visibility-gated toggle. The SSR markup is fully readable and
+ * the keyframe's `from`/`to` both leave the element at its natural
+ * position, so even if the animation never fires (headless render,
+ * hidden tab) the content ends fully visible. Stagger is per-element via
+ * the `.hero-rise-delay-*` classes. Reduced-motion (either gate) collapses
+ * the lift to nothing and lands instantly at opacity 1.
+ */
+@keyframes hero-rise {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 10px, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+.animate-hero-rise {
+	/* ease-out-expo: weighted lift that arrives quickly then settles soft. */
+	animation: hero-rise 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+	will-change: transform, opacity;
+}
+
+/* Per-element stagger. Kept in the tens-of-ms range so the whole cascade
+   (logo → CTA, last delay + duration) finishes well under ~1s. */
+.hero-rise-delay-1 {
+	animation-delay: 60ms;
+}
+.hero-rise-delay-2 {
+	animation-delay: 120ms;
+}
+.hero-rise-delay-3 {
+	animation-delay: 180ms;
+}
+.hero-rise-delay-4 {
+	animation-delay: 260ms;
+}
+/* The desktop tribes overlay joins late as a subtle tail to the cascade. */
+.hero-rise-delay-5 {
+	animation-delay: 380ms;
+}
+
+@keyframes hero-rise-reduced {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* Reduced motion — DOUBLE-gated. Under the system pref the rule below
+   swaps to a pure crossfade (no transform). The manual opt-in
+   (`html[data-reduced-motion='true']`) is handled by the global override
+   near the top of this file, which short-circuits transform/opacity
+   animations to 0.001ms and lands them at their `to` state. Either way the
+   final state is opacity 1, no transform — content present, motion gone. */
+@media (prefers-reduced-motion: reduce) {
+	.animate-hero-rise {
+		animation-name: hero-rise-reduced;
+		animation-duration: 200ms;
+	}
+}
+
+/* Class-based fallback for tooling that strips the media query (e.g. tests). */
+.animate-hero-rise-reduced {
+	animation: hero-rise-reduced 200ms ease-out both;
+}
+
+/*
+ * Bottom-sheet rise. Mobile panels slide up from the dock; desktop panels
+ * fade in centered. The cubic-bezier is the iOS-style "spring out" curve —
+ * fast leave, soft landing. Reduced motion collapses it to a fade.
+ */
+@keyframes panel-rise {
+	from {
+		opacity: 0;
+		transform: translate3d(0, 16px, 0);
+	}
+	to {
+		opacity: 1;
+		transform: translate3d(0, 0, 0);
+	}
+}
+
+/*
+ * Chunky game-button press feedback.
+ *
+ * The chrome already paints buttons with a stacked shadow that reads as a
+ * physical bevel: `0 4px 0 <dark>, 0 9px 16px <ambient>`. On press, the
+ * button "settles" — it travels down by the height of its bevel and the
+ * cast shadow collapses to match. The transition is short and uses
+ * ease-out-quart so the down-stroke feels weighted but the rebound after
+ * release is instant (release returns via the default style without easing).
+ *
+ * Two ramps so the gold "primary" beveled buttons and the teal "secondary"
+ * buttons each collapse to their own under-color rather than a generic
+ * gray. Apply with `data-press='gold'` or `data-press='teal'`.
+ *
+ * `transform: translateZ(0)` promotes to its own compositor layer so
+ * the press animation never repaints surrounding canvas content.
+ */
+[data-press] {
+	transform: translateZ(0);
+	transition:
+		transform 90ms cubic-bezier(0.5, 0, 0.75, 0),
+		box-shadow 90ms cubic-bezier(0.5, 0, 0.75, 0),
+		background-color 120ms ease-out;
+	will-change: transform;
+}
+
+[data-press]:active:not(:disabled) {
+	/* Travel the bevel + a hair of scale-down so the button reads as a
+	   physical token being pressed into the board — chunky, tabletop-feel,
+	   not a flat "tap and color-shift". The scale is small (1.5%) so the
+	   label never gets blurry on retina. */
+	transform: translate3d(0, 3px, 0) scale(0.985);
+}
+
+[data-press='gold']:active:not(:disabled) {
+	box-shadow:
+		0 1px 0 var(--gold-bevel),
+		0 3px 6px var(--gold-cast);
+}
+
+[data-press='teal']:active:not(:disabled) {
+	box-shadow:
+		0 1px 0 var(--teal-bevel),
+		0 3px 6px var(--teal-cast);
+}
+
+[data-press='ember']:active:not(:disabled) {
+	box-shadow:
+		0 1px 0 var(--ember-bevel),
+		0 3px 6px var(--ember-cast);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-press] {
+		transition: background-color 120ms ease-out;
+	}
+	[data-press]:active:not(:disabled) {
+		transform: none;
+	}
+}
+
+/* Hairline carved-edge that runs along the top of HUD chrome panels —
+   reads as a tabletop bevel without resorting to drop shadows. */
+.hud-edge-top {
+	box-shadow:
+		inset 0 1px 0 oklch(1 0 0 / 0.18),
+		0 3px 0 var(--teal-bevel),
+		0 8px 22px var(--hud-shadow-top);
+}
+
+.hud-edge-bottom {
+	box-shadow:
+		inset 0 -1px 0 oklch(1 0 0 / 0.12),
+		0 -3px 0 var(--teal-bevel),
+		0 -10px 24px var(--hud-shadow-bottom);
+}
+
+/* Safe-area helpers — read like Tailwind utilities and DRY up the
+   `pb-[max(...)]` incantations that were scattered through chrome. */
+.safe-top {
+	padding-top: max(0.5rem, env(safe-area-inset-top));
+}
+
+.safe-bottom {
+	padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
+}
+
+.safe-x {
+	padding-left: max(0.5rem, env(safe-area-inset-left));
+	padding-right: max(0.5rem, env(safe-area-inset-right));
+}
+
+/*
+ * Native-feel scroller. The lobby and the action dock both need to scroll
+ * horizontally on mobile without showing a scrollbar (the affordance is
+ * the overflow itself + scroll-snap), and without the iOS bounce making
+ * the canvas behind feel jittery.
+ */
+.no-scrollbar {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+	display: none;
+}
+
+.snap-x-dock {
+	scroll-snap-type: x mandatory;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior-x: contain;
+}
+
+.snap-x-dock > * {
+	scroll-snap-align: start;
+}

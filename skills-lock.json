@@ -1,0 +1,11 @@
+{
+	"version": 1,
+	"skills": {
+		"poly-pizza-api": {
+			"source": "editframe/skills",
+			"sourceType": "github",
+			"skillPath": ".claude/skills/poly-pizza-api/SKILL.md",
+			"computedHash": "56b6c5334eb4ffbb2a31c7ee8850745ef6e92ac134b13845b751d8b031063a93"
+		}
+	}
+}

@@ -1,0 +1,7 @@
+{
+	"extends": "./tsconfig.base.json",
+	"compilerOptions": {
+		"types": ["node"]
+	},
+	"include": ["vite.config.ts", "lint.config.ts", "tools/**/*.ts"]
+}

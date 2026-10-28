@@ -1,0 +1,188 @@
+packages:
+  - apps/*
+  - packages/*
+  - infra
+
+autoInstallPeers: false
+
+allowBuilds:
+  esbuild: true
+  workerd: true
+  sharp: true
+  core-js: false
+  msw: false
+
+catalog:
+  'oxlint-plugin-effect': '0.25.0'
+  'oxlint-plugin-react-doctor': '0.9.18'
+  'eslint-plugin-better-tailwindcss': '4.7.0'
+  'ultracite': '7.12.2'
+  '@base-ui/react': '1.8.0'
+  '@cloudflare/workers-types': '5.20261001.1'
+  '@dagrejs/dagre': '3.1.1'
+  '@effect/atom-react': '4.0.6'
+  '@effect/platform-node': '4.0.6'
+  '@effect/tsgo': '0.57.0'
+  '@effect/vitest': '4.0.6'
+  '@fontsource-variable/cinzel': '5.3.0'
+  '@fontsource-variable/crimson-pro': '5.3.0'
+  '@gltf-transform/cli': '4.5.1'
+  '@mdx-js/rollup': '3.1.1'
+  '@playwright/test': '1.63.0'
+  '@react-three/drei': '10.7.9'
+  '@react-three/fiber': '9.8.1'
+  '@storybook/react-vite': '10.6.1'
+  '@tailwindcss/typography': '0.5.20'
+  '@tailwindcss/vite': '4.3.3'
+  '@tanstack/devtools-vite': '0.8.5'
+  '@tanstack/react-devtools': '0.10.13'
+  '@tanstack/react-form': '1.33.5'
+  '@tanstack/react-query': '5.104.0'
+  '@tanstack/react-query-devtools': '5.104.0'
+  '@tanstack/react-router': '1.170.44'
+  '@tanstack/react-router-devtools': '1.167.2'
+  '@tanstack/react-router-ssr-query': '1.167.3'
+  '@tanstack/react-start': '1.169.1'
+  '@types/lodash-es': '4.17.12'
+  '@types/node': '26.6.3'
+  '@types/react': '19.3.0'
+  '@types/react-dom': '19.3.0'
+  '@types/three': '0.186.0'
+  '@vite-pwa/assets-generator': '2.0.0'
+  '@vitejs/plugin-react': '6.1.1'
+  '@xyflow/react': '12.12.0'
+  'alchemy': '2.0.0-beta.79'
+  'better-auth': '1.7.7'
+  'class-variance-authority': '0.7.1'
+  'clsx': '2.1.1'
+  'drizzle-kit': '1.0.0-rc.5-5935859'
+  'drizzle-orm': '1.0.0-rc.5-5935859'
+  'effect': '4.0.6'
+  'effectful-better-auth': '1.0.4'
+  'fallow': '3.31.0'
+  'gltf-pipeline': '4.3.1'
+  'honeycomb-grid': '4.1.5'
+  'lodash-es': '4.18.1'
+  'lucide-react': '1.49.0'
+  'miniflare': '5.20260930.0-alpha'
+  'prando': '6.0.1'
+  'react': '19.3.0'
+  'react-dom': '19.3.0'
+  'rehype-slug': '6.0.0'
+  'remark-frontmatter': '5.0.0'
+  'remark-gfm': '4.0.1'
+  'remark-mdx-frontmatter': '6.0.0'
+  'scheduler': '0.28.0'
+  'shadcn': '4.21.1'
+  'sonner': '2.0.8'
+  'storybook': '10.6.1'
+  'tailwind-merge': '3.7.0'
+  'tailwindcss': '4.3.3'
+  'three': '0.186.1'
+  'three-stdlib': '2.36.1'
+  'tw-animate-css': '1.4.0'
+  'typescript': '7.0.2'
+  'vite': 'npm:@voidzero-dev/vite-plus-core@1.0.0'
+  'vite-plugin-pwa': '1.3.0'
+  'vite-plus': '1.0.0'
+  'vitest': '5.0.3'
+  'workbox-window': '7.4.1'
+  'wrangler': '4.145.0'
+minimumReleaseAgeExclude:
+  - '@voidzero-dev/vite-plus-core@1.0.0'
+  - '@voidzero-dev/vite-plus-darwin-arm64@1.0.0'
+  - '@voidzero-dev/vite-plus-darwin-x64@1.0.0'
+  - '@voidzero-dev/vite-plus-linux-arm64-gnu@1.0.0'
+  - '@voidzero-dev/vite-plus-linux-arm64-musl@1.0.0'
+  - '@voidzero-dev/vite-plus-linux-x64-gnu@1.0.0'
+  - '@voidzero-dev/vite-plus-linux-x64-musl@1.0.0'
+  - '@voidzero-dev/vite-plus-win32-arm64-msvc@1.0.0'
+  - '@voidzero-dev/vite-plus-win32-x64-msvc@1.0.0'
+  - vite-plus@1.0.0
+  - '@cloudflare/workers-types@5.20261001.1'
+  - '@effect/atom-react@4.0.0'
+  - '@effect/language-service@0.87.3'
+  - '@effect/platform-node-shared@4.0.0'
+  - '@effect/platform-node@4.0.0'
+  - '@effect/vitest@4.0.0'
+  - '@tanstack/react-router@1.170.44'
+  - '@tanstack/react-start-client@1.168.42'
+  - '@tanstack/react-start-rsc@0.1.62'
+  - '@tanstack/react-start-server@1.167.49'
+  - '@tanstack/react-start@1.169.1'
+  - '@tanstack/router-core@1.171.37'
+  - '@tanstack/router-generator@1.167.43'
+  - '@tanstack/router-plugin@1.168.45'
+  - '@tanstack/start-client-core@1.170.37'
+  - '@tanstack/start-plugin-core@1.171.52'
+  - '@tanstack/start-server-core@1.169.42'
+  - '@tanstack/start-storage-context@1.167.39'
+  - 'effect@4.0.0'
+  - 'miniflare@5.20260930.0-alpha'
+  - 'wrangler@4.145.0'
+  - 'oxlint-plugin-effect@0.25.0'
+  - ultracite@7.12.1
+  - hono@4.13.10
+  - effectful-better-auth@1.0.4
+  - '@effect/sql-d1@4.0.0'
+  - '@effect/sql-sqlite-do@4.0.0'
+  - '@better-auth/core@1.7.7'
+  - '@better-auth/drizzle-adapter@1.7.7'
+  - '@better-auth/kysely-adapter@1.7.7'
+  - '@better-auth/memory-adapter@1.7.7'
+  - '@better-auth/mongo-adapter@1.7.7'
+  - '@better-auth/prisma-adapter@1.7.7'
+  - '@better-auth/telemetry@1.7.7'
+  - '@effect/tsgo@0.47.2 || 0.57.0'
+  - '@effect/tsgo-darwin-arm64@0.47.2 || 0.57.0'
+  - '@effect/tsgo-darwin-x64@0.47.2 || 0.57.0'
+  - '@effect/tsgo-linux-arm@0.47.2 || 0.57.0'
+  - '@effect/tsgo-linux-arm64@0.47.2 || 0.57.0'
+  - '@effect/tsgo-linux-x64@0.47.2 || 0.57.0'
+  - '@effect/tsgo-win32-arm64@0.47.2 || 0.57.0'
+  - '@effect/tsgo-win32-x64@0.47.2 || 0.57.0'
+  - '@fallow-cli/darwin-arm64@3.31.0'
+  - '@fallow-cli/darwin-x64@3.31.0'
+  - '@fallow-cli/linux-arm64-gnu@3.31.0'
+  - '@fallow-cli/linux-arm64-musl@3.31.0'
+  - '@fallow-cli/linux-x64-gnu@3.31.0'
+  - '@fallow-cli/linux-x64-musl@3.31.0'
+  - '@fallow-cli/win32-arm64-msvc@3.31.0'
+  - '@fallow-cli/win32-x64-msvc@3.31.0'
+  - '@shadcn/registry@0.1.0'
+  - 'better-auth@1.7.7'
+  - 'fallow-type-aware@3.31.0'
+  - 'fallow@3.31.0'
+  - 'shadcn@4.21.1'
+overrides:
+  # Security fixes for versions pinned by Solid, Miniflare and Typography.
+  seroval@<1.6.3: 1.6.9
+  sharp@<0.35.5: 0.35.5
+  '@tailwindcss/typography>postcss-selector-parser': 7.1.6
+  valibot@<1.4.2: 1.4.2
+  undici@7.29.0: 7.30.0
+  '@effect/platform-node': 4.0.0
+  '@effect/sql-d1': 4.0.0
+  '@effect/sql-sqlite-do': 4.0.0
+  '@effect/vitest': 4.0.0
+  hono: 4.13.10
+  '@hono/node-server': 2.1.1
+  lodash: 4.18.1
+  vite@*: 'catalog:'
+  vitest@*: 'catalog:'
+peerDependencyRules:
+  allowAny:
+    - vite
+    - vitest
+  allowedVersions:
+    vite: '*'
+    vitest: '*'
+
+patchedDependencies:
+  '@alchemy.run/cloudflare-runtime@2.0.0-beta.79': patches/@alchemy.run__cloudflare-runtime@2.0.0-beta.79.patch
+  '@distilled.cloud/core@1.0.0-rc.12': patches/@distilled.cloud__core@1.0.0-rc.12.patch
+  'alchemy@2.0.0-beta.79': patches/alchemy@2.0.0-beta.79.patch
+  '@distilled.cloud/aws@1.0.0-rc.12': patches/@distilled.cloud__aws@1.0.0-rc.12.patch
+  '@distilled.cloud/fly-io@1.0.0-rc.12': patches/@distilled.cloud__fly-io@1.0.0-rc.12.patch
+  '@distilled.cloud/railway@1.0.0-rc.12': patches/@distilled.cloud__railway@1.0.0-rc.12.patch
+  '@distilled.cloud/stripe@1.0.0-rc.12': patches/@distilled.cloud__stripe@1.0.0-rc.12.patch

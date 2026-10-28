@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+set -e
+
+# Vite+ stashes partial changes and formats only staged files.
+# Run pnpm run check before committing; CI enforces the full workspace checks.
+pnpm exec vp staged

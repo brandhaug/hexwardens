@@ -1,0 +1,12 @@
+{
+	"setup": [
+		{
+			"command": "ROOT_PATH=\"$SUPERCONDUCTOR_ROOT_PATH\" WORKSPACE_PATH=\"$SUPERCONDUCTOR_WORKSPACE_PATH\" scripts/worktrees/setup.sh"
+		}
+	],
+	"run": [
+		{
+			"command": "scripts/worktrees/run.sh"
+		}
+	]
+}

@@ -1,0 +1,89 @@
+---
+title: 'Villages'
+description: 'How Villages work — Capital, leveling, Perks, population, salary, control range, and the two-step capture flow.'
+category: buildings
+order: 4
+---
+
+Villages are the most important structures in the game. They are your primary source of income, the only place to [train units](/wiki/units/training-and-healing), and losing all of them eliminates your Tribe.
+
+## Village Properties
+
+Each Village tracks:
+
+- **Kind** — `capital` or `regular` (see [Capital](#capital))
+- **Level** (1–N)
+- **Experience** and XP threshold to next level
+- **Population** (current units trained) and max population
+- **Perks** — chosen on level-up (see [Village Perks](#village-perks))
+- **Salary** (gold earned per turn)
+- **Range** (territory control radius)
+- **`captureSetup`** — pending capture marker, if any (see [Capture](/wiki/mechanics/capture))
+
+## Capital
+
+Each Tribe begins the Match with exactly one **Capital** — its starting Village. The Capital is a regular Village in every respect except one: it grants the owning Tribe **+1 maximum population** at every Village level.
+
+Capital rules:
+
+- The Capital flag **survives capture**. A captured Capital remains a Capital under the new owner.
+- A Tribe whose Capital is taken does **not** gain a new Capital from any other Village. There is exactly one Capital per Tribe per Match, ever.
+- Levels, Perks, and Population all behave identically for Capital and regular Villages — the only difference is the +1 max-population bonus.
+
+## Leveling
+
+Villages gain experience from actions performed within their control range:
+
+| Action             | XP Gained |
+| ------------------ | --------- |
+| Build a structure  | 5 XP      |
+| Collect a resource | 1 XP      |
+| Explore ruins      | 3 XP      |
+
+When a Village reaches its XP threshold, it levels up automatically. On level-up, the owning Player picks one **Village Perk** from a tier-specific menu (see below). XP carries over the threshold.
+
+## Village Perks
+
+Each level-up presents a 1-of-N Perk choice. The Perk pool depends on the Village's new level. At **level 5**, one of the offered Perks is `special_unit` — the only mechanism for [summoning your Tribe's Hero](/wiki/units/unit-types#hero-units).
+
+Key Perk rules:
+
+- The level-up menu pauses at a Player-side prompt; the choice is the irreversible commitment for that level.
+- `special_unit` is **only** offered at the level-5 transition. If you take any other Perk at level 5, that Village can never spawn a Hero.
+- All Perks survive capture. A captor inherits the previous owner's Perk choices and **cannot retroactively pick `special_unit`** for a Village that has already passed its level-5 transition under another owner.
+- Perks include territory expansion, +gold-per-turn boosters, +population boosters, and the Hero summon at level 5.
+
+## Population
+
+Population represents the number of units a Village supports. Each trained unit adds 1 to the population count. Capital Villages have +1 max population at every level.
+
+If a Village is at its maximum population, you cannot train more units there — level the Village, retire a unit, or train at a different one.
+
+## Salary
+
+When you end your turn, every Village you own generates gold equal to its level. See [Turn System](/wiki/mechanics/turns) for more on salary timing.
+
+## Control Range
+
+Villages control a **1 hex radius** around them. Tiles within range are considered your territory — you can [build](/wiki/buildings/primary-buildings), [collect resources](/wiki/mechanics/resources), and perform other territorial actions on these tiles.
+
+## Capturing Villages
+
+Capture is now a **two-step** Action (see [Capture](/wiki/mechanics/capture) for the full flow). In summary:
+
+1. A Player issues `capture` on a friendly Unit standing on the enemy or neutral Village. The Unit is locked to `acted`, and the Village receives a `captureSetup` marker recording the capturing Tribe and the Turn.
+2. At the start of the capturing Tribe's **next Turn**, ownership flips — provided the same Tribe's Unit is still on the tile. If the Unit moved, died, or was replaced by an enemy Unit, the marker is cleared without flipping.
+
+A successful capture preserves the Village's level, Perks, Capital flag, experience, and existing Perk choices. Population resets to 0.
+
+If you flip the **last Village** of an enemy Tribe, that Tribe is **eliminated** — all its remaining units are removed from the board.
+
+If the previous owner researched **City Wall**, the bonus belongs to the current Village owner; captured Villages use the new owner's tech.
+
+## Strategic Tips
+
+- Push your Capital toward level 5 quickly — the Hero-summon Perk is locked behind it.
+- [Collecting resources](/wiki/mechanics/resources) at 1 XP each is the cheapest way to level Villages, especially at low tiers where the threshold is small.
+- [Building structures](/wiki/buildings/primary-buildings) gives 5 XP in one action, jumping a level 1 Village multiple levels at once.
+- Higher-level Villages support more units and generate more gold, creating a compounding advantage — and Capital Villages always sit one population step ahead.
+- When capturing, plan for the **setup window**: the capturing Unit is exposed for a full Turn before ownership flips.

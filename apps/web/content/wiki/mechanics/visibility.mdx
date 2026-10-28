@@ -1,0 +1,48 @@
+---
+title: 'Visibility & Exploration'
+description: 'How fog of war works — visibility sources, sight modifiers, and scouting strategy.'
+category: mechanics
+order: 6
+---
+
+Hexwardens uses a fog-of-war system. You can only see tiles that have been explored by your Units or are within range of your [Villages](/wiki/buildings/villages).
+
+## Visibility Sources
+
+### Village Range
+
+Each Village reveals all tiles within its **control range** (default 1 hex radius). Every tile within a Village's range remains permanently visible.
+
+### Unit Exploration
+
+Each Unit reveals tiles within its **exploration range** as it [moves](/wiki/mechanics/movement):
+
+| Unit       | Exploration Range |
+| ---------- | ----------------- |
+| Seer       | 2 tiles           |
+| Sprinter   | 2 tiles           |
+| Most units | 1 tile            |
+
+### Sight Modifiers
+
+- **On a stone tile** — sight range is increased by **+1** while standing on it. Combined with the `Climbing` cost-of-entry rule, stone tiles are a high-value scouting perch.
+- **Earth Mastery** — ranged units (Archer, Mage) gain **+1** sight range.
+- **Flying** — units with the [flying passive](/wiki/units/unit-types#passive-abilities) gain **+1** sight (no production unit currently has flying).
+
+## Explored vs. Visible
+
+- **Explored** tiles are ones you have discovered at any point. Once explored, a tile remains fully revealed on the map permanently — terrain, items, **and any units** standing on it stay visible.
+- **Visible** tiles are ones currently within range of your Villages or Units. Visibility updates at the start of your Turn.
+
+Fog of war never returns: once you have seen a tile, you can keep tracking what happens on it without needing line of sight.
+
+## Server-Trusted Fog
+
+In multiplayer matches, fog of war is computed **server-side** — the client never re-derives visibility. Tiles outside your projection are not delivered over the wire. This is an architectural invariant; tooling that tries to "re-derive fog for safety" will double-filter.
+
+## Scouting Strategy
+
+- **[Seers](/wiki/units/unit-types)** are the best scouts — 2 movement + 2 exploration range covers wide ground each Turn.
+- Position scouts on **stone tiles** to get the +1 sight perch — useful when planning a deep push.
+- Capturing new Villages extends your permanent visibility through their control range — but expect a [setup window](/wiki/mechanics/capture) before ownership flips.
+- Prioritize exploring toward the center of the map where [ruins](/wiki/mechanics/ruins) and key Villages tend to be placed.

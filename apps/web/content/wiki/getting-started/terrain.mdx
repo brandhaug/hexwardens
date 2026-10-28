@@ -1,0 +1,62 @@
+---
+title: 'Terrain Types'
+description: 'All terrain types — land, shallow water, deep ocean, mountain elevation, and how the board is generated.'
+category: getting-started
+order: 3
+---
+
+The hex grid is made up of 12 visual terrain types plus a separate water tier (shallow water and deep ocean). Terrain determines which [resources](/wiki/mechanics/resources), [buildings](/wiki/buildings/primary-buildings), and [Tribes](/wiki/tribes/all-tribes) appear in each area.
+
+<TerrainTileGrid />
+
+## Land Terrains
+
+| Terrain  | Tribe      | Resource     | Tech Path |
+| -------- | ---------- | ------------ | --------- |
+| Grass    | —          | Apple, Wheat | Plants    |
+| Tundra   | Barbarians | Fish         | Plants    |
+| Snow     | —          | Leather      | Plants    |
+| Forest   | Templars   | Berry        | Earth     |
+| Jungle   | Druids     | Herb         | Earth     |
+| Swamp    | Wraiths    | Mushroom     | Earth     |
+| Desert   | Skeletons  | Granite      | Fire      |
+| Barren   | Orcs       | Iron         | Fire      |
+| Stone    | Engineers  | Gem          | Mineral   |
+| Terraced | Rogues     | Clay         | Mineral   |
+| Ice      | Frostkin   | Crystal      | Mineral   |
+
+The 12 visual terrain types are mapped onto the five elemental [Tech Paths](/wiki/mechanics/technology#tech-paths) — Plants, Earth, Fire, Mineral — so the building set stays aligned 1:1 with Path Masteries while preserving Tribe-terrain identity. Grass is the only land terrain that spawns two resource types.
+
+## Water and Ocean
+
+The board distinguishes two water tiers:
+
+- **Shallow water** lines coastlines, accepts Tavern / Dock placement, and spawns the Pearl resource. Land units cross it once their Tribe has researched **Water & Bomber**. Bombardier and Tidebreaker ignore the gate.
+- **Deep ocean** is interior water surrounded entirely by water. It is gated by **Ocean & Admiral** (which carries the `ocean_traversal` passive). Bombardier and Tidebreaker have innate ocean traversal — no tech needed.
+
+Once on water, a unit fights and moves as a [naval form](/wiki/mechanics/movement#naval-forms) of itself.
+
+## Mountain Elevation
+
+Separately from the Stone terrain type, any tile can carry a **mountain elevation** flag. A Forest tile or a Grass tile can also be mountainous. Roughly **10%** of tiles on the map have this elevation flag.
+
+Stone rules:
+
+- **Climbing tech required** to enter a stone tile at all.
+- **Entering a stone tile costs 2 movement**, so a 1-movement unit cannot step onto one without a movement bonus (see [movement](/wiki/mechanics/movement)).
+- Units **standing on a stone tile see 1 tile farther** than they normally would (see [visibility](/wiki/mechanics/visibility)).
+- Defenders on a stone tile receive a defensive bonus in [combat](/wiki/units/combat).
+
+## Board Generation
+
+The map is procedurally generated using a seed-based system:
+
+1. **Water clusters** are placed first using path-seeded algorithms.
+2. **Deep ocean** is derived: any water tile whose six in-bounds hex neighbors are all water becomes ocean.
+3. **Land terrain** is distributed across the remaining tiles using a proximity-based algorithm.
+4. **Mountains** are assigned to ~10% of land tiles as an elevation flag.
+5. **Villages** are placed at least **3 hexes apart**, with each Tribe's Capital on its home terrain.
+6. **Resources and buildings** are placed within **2 hexes** of a Village, ensuring they are reachable.
+7. **[Ruins](/wiki/mechanics/ruins)** are scattered across the map.
+
+The board size scales with the number of players and tiles configured in [game setup](/wiki/getting-started/setup).

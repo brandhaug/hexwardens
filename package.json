@@ -1,0 +1,62 @@
+{
+	"name": "hexwardens",
+	"private": true,
+	"description": "Turn-based hex-strategy web game — React 19 + TanStack Start, Cloudflare Workers + Durable Objects multiplayer, shared pure-TS game logic",
+	"license": "MIT",
+	"author": "Martin Brandhaug",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/brandhaug/hexwardens.git"
+	},
+	"type": "module",
+	"scripts": {
+		"lint": "vp lint --type-aware",
+		"lint:fix": "vp lint --type-aware --fix",
+		"typecheck": "vp run --filter '**' --filter '!hexwardens' typecheck && pnpm run typecheck:repo",
+		"format": "vp fmt --write",
+		"format:check": "vp fmt --check",
+		"prepare": "git config core.hooksPath .githooks",
+		"dev": "vp run -r --parallel dev",
+		"build": "pnpm run check:alchemy && vp run -r build",
+		"dev:web": "pnpm -C apps/web dev",
+		"deploy": "node scripts/alchemy-stage.ts deploy --stage=prod",
+		"destroy": "node scripts/alchemy-stage.ts destroy --stage=prod",
+		"db:generate": "pnpm -C packages/db db:generate",
+		"db:migrate:local": "pnpm -C apps/game-server db:migrate:local",
+		"db:migrate:remote": "pnpm -C packages/db db:migrate:remote",
+		"fallow": "fallow",
+		"test": "vp run --filter '**' --filter '!hexwardens' test && pnpm run test:scripts",
+		"dead-code": "fallow dead-code --fail-on-regression",
+		"check": "pnpm run typecheck && pnpm run lint && pnpm run format:check && pnpm run dead-code && pnpm run test",
+		"validate": "pnpm run check && pnpm run build && pnpm run infra:check && pnpm run db:migrate:local && CI=1 pnpm run test:e2e",
+		"test:e2e": "pnpm -C apps/web test:e2e",
+		"infra:wrangler": "node infra/write-wrangler.ts",
+		"check:alchemy": "node scripts/check-alchemy.ts",
+		"infra:check": "node infra/write-wrangler.ts --check",
+		"deploy:stage": "node scripts/alchemy-stage.ts deploy",
+		"destroy:stage": "node scripts/alchemy-stage.ts destroy",
+		"typecheck:repo": "tsc --noEmit -p tsconfig.repo.json",
+		"test:scripts": "vp test run .github/scripts"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@effect/platform-node": "catalog:",
+		"@effect/tsgo": "catalog:",
+		"@gltf-transform/cli": "catalog:",
+		"@types/node": "catalog:",
+		"alchemy": "catalog:",
+		"effect": "catalog:",
+		"eslint-plugin-better-tailwindcss": "catalog:",
+		"fallow": "catalog:",
+		"gltf-pipeline": "catalog:",
+		"oxlint-plugin-effect": "catalog:",
+		"oxlint-plugin-react-doctor": "catalog:",
+		"typescript": "catalog:",
+		"ultracite": "catalog:",
+		"vite-plus": "catalog:"
+	},
+	"engines": {
+		"node": ">=24.13.0"
+	},
+	"packageManager": "pnpm@12.6.0"
+}

@@ -1,0 +1,52 @@
+.vite/
+node_modules
+.DS_Store
+.env
+.dev.vars
+!.env.example
+
+# IntelliJ IDEA
+.idea/
+
+# Database
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Build output
+dist
+.wrangler
+.wrangler-dev
+.alchemy/
+
+# Tanstack start/router
+.vinxi
+.output
+.tanstack/
+.nitro/
+
+# Playwright
+apps/web/playwright-report/
+apps/web/test-results/
+apps/web/.playwright/
+apps/web/blob-report/
+apps/web/all-blob-reports/
+
+# Fallow cache
+.fallow/
+
+# Claude Code local state (worktrees, launch config)
+.claude/
+
+# Local design-skill hook cache
+.impeccable/hook.cache.json
+
+# PWA dev build output
+apps/web/dev-dist/
+
+# Storybook build output
+apps/web/storybook-static/
+
+# Private research stays outside version control
+/docs/research/

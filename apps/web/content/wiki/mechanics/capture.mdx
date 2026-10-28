@@ -1,0 +1,51 @@
+---
+title: 'Capture'
+description: 'The two-step Village capture flow — setup, flip, cancellation, and tribe elimination.'
+category: mechanics
+order: 7
+---
+
+[Villages](/wiki/buildings/villages) are taken by **Capture**, a two-step Action that locks the capturing Unit on the Village tile for one Turn before ownership flips.
+
+## The Two Steps
+
+### Step 1 — Setup
+
+A Player issues `capture` on one of their Units that is standing on the enemy or neutral Village tile and is in **ready** mode. On dispatch:
+
+- The Unit's mode is set to **acted** for the rest of this Turn (it cannot move, attack, or capture again).
+- The Village gains a `captureSetup` marker: `{ byTribe, turnInitiated }`.
+- Ownership does **not** flip yet. The Village still belongs to the previous owner — the marker simply records that a capture is in progress.
+
+The marker is publicly visible — every Player can see that a capture is being attempted.
+
+### Step 2 — Flip
+
+At the start of the capturing Tribe's **next Turn**, the turn pipeline runs a `captureFlip` phase. For each Village with a `captureSetup`:
+
+- If the same Tribe's Unit still occupies the tile, ownership flips. The Village's `tribe` and `state` change; level, Perks, Capital flag, experience, and population structure are preserved (population resets to 0). A `villageCaptured` event is broadcast.
+- If the Unit moved off, was killed, or an enemy Unit now stands on the tile, the marker is cleared **without** flipping ownership.
+
+The Village's perks and level survive the flip. A captured level-5+ Village does **not** let the captor pick `special_unit` retroactively — the previous owner's Perk choices are inherited.
+
+## Cancelling a Capture
+
+Three things cancel an in-progress capture:
+
+1. **The capturing Unit moves away.** The marker is cleared at flip time when no friendly Unit remains on the tile.
+2. **The capturing Unit is killed.** Same effect — no Unit, no flip.
+3. **An enemy Unit recaptures the tile** (e.g., the previous owner walks a defender onto the Village before the capturing Tribe's next Turn). The marker is cleared without flipping.
+
+Concurrent attempts: if two enemy Units somehow contest the Village in the same setup window, the most recent `capture` Action overwrites any prior marker. Ownership flips for whichever Tribe holds the Unit at the start of the next applicable Turn.
+
+## Tribe Elimination
+
+When a flip removes the previous owner's **last Village**, that Tribe is **eliminated**. All of the Tribe's remaining units are removed from the board, and the Tribe takes no further Turns.
+
+The 500-Turn cap is retained as a draw safety valve; if it expires with more than one Tribe still alive, the Match ends as a draw with no winner declared.
+
+## Strategic Implications
+
+- The capturing Unit is **exposed** through the entire setup window. Plan a follow-up defender for the tile before issuing capture.
+- A single fast Unit (Seer, Sprinter) cannot solo-capture a contested Village — it gets one Turn of vulnerability before ownership flips.
+- Use the setup window offensively too: a Mage parked one tile away can punish anyone who tries to break the capture.

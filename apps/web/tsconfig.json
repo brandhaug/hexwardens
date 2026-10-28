@@ -1,0 +1,46 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": [
+		"**/*.ts",
+		"**/*.tsx",
+		".storybook/**/*.ts",
+		".storybook/**/*.tsx"
+	],
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"lib": ["ES2024", "DOM", "DOM.Iterable"],
+		"types": [
+			"vite/client",
+			"vite-plugin-pwa/client",
+			"@cloudflare/workers-types",
+			"vitest/globals"
+		],
+		"plugins": [
+			{
+				"name": "@effect/language-service",
+				// Effect v4 HTTP and reactive APIs are intentional; retain all other diagnostics.
+				"overrides": [
+					{
+						"include": [
+							"src/lib/api-client.ts",
+							"src/lib/game-client.ts",
+							"src/routes/api.auth.$.ts",
+							"src/components/online-presence-bar.tsx",
+							"src/components/lobby/daily-challenge-briefing.tsx",
+							"src/routes/leaderboard.tsx",
+							"src/routes/profile.$username.tsx"
+						],
+						"options": {
+							"diagnosticSeverity": {
+								"unstableApiUsage": "off"
+							}
+						}
+					}
+				]
+			}
+		],
+		"paths": {
+			"@/*": ["./src/*"]
+		}
+	}
+}

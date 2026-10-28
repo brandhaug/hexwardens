@@ -1,0 +1,71 @@
+---
+title: 'All Tribes'
+description: 'All 9 playable tribes — home terrain, starting units, hero units, Capital, and elimination rules.'
+category: tribes
+order: 1
+---
+
+Hexwardens features 9 distinct Tribes, each with a unique home [terrain](/wiki/getting-started/terrain), color, starting unit composition, [Hero unit](/wiki/units/unit-types), and [technology](/wiki/mechanics/technology) affinities. All Tribes begin with **5 gold** in the treasury and one **[Capital](/wiki/buildings/villages#capital)** Village.
+
+## Tribe List
+
+| Tribe      | Color   | Home Terrain | Primary Unit | Secondary Unit | Hero Unit      |
+| ---------- | ------- | ------------ | ------------ | -------------- | -------------- |
+| Barbarians | Blue    | Tundra       | Caveman      | Caveman        | Berserker      |
+| Rogues     | Red     | Terraced     | Caveman      | Seer           | Shogun         |
+| Druids     | Green   | Jungle       | Caveman      | Spearman       | Wolf           |
+| Orcs       | Gray    | Barren       | Caveman      | Guard          | Orc Raider     |
+| Wraiths    | Purple  | Swamp        | Caveman      | —              | Black Knight   |
+| Engineers  | Orange  | Stone        | Caveman      | Guard          | Clanker        |
+| Templars   | Emerald | Forest       | Caveman      | Archer         | Paladin        |
+| Skeletons  | Yellow  | Desert       | Caveman      | —              | Skeleton Golem |
+| Frostkin   | Cyan    | Ice          | Caveman      | Spearman       | Frostlord      |
+
+Every Tribe starts with a **Caveman** on its [Capital](/wiki/buildings/villages#capital) Village tile and (where listed) a secondary Unit on an adjacent tile. With Scout and Shaman both culled, **Wraiths** and **Skeletons** no longer get a tier-2 starting Unit and instead rely on early tech to round out their opening.
+
+## The Capital
+
+Each Tribe's starting Village is its **Capital** — the only Village that grants the Tribe a **+1 maximum population** bonus at every level. The Capital flag survives capture, and a Tribe whose Capital is taken does not gain a new Capital from any other Village. Push your Capital toward level 5 — that is the only Village transition where you can summon your Hero (see below).
+
+## Notable Differences
+
+- **Barbarians** are the only Tribe that starts with two Cavemen, giving them early combat strength.
+- **Rogues** start with a [Seer](/wiki/units/unit-types), providing early scouting and mobility.
+- **Druids** and **Frostkin** start with a Spearman, giving them early anti-cavalry defense.
+- **Orcs** and **Engineers** start with a Guard, offering strong early-game Village defense.
+- **Wraiths** and **Skeletons** start with no secondary Unit; their early game leans on Caveman-plus-tech tempo.
+
+## Hero Units
+
+Each Tribe has a unique [Hero unit](/wiki/units/unit-types#hero-units). Heroes have **fixed stats** — they do not level up through play.
+
+A Hero is **not** trainable with gold. The owning Player summons their Tribe's Hero by choosing the `special_unit` [Village Perk](/wiki/buildings/villages#village-perks) when one of their Villages levels up to **level 5**. The perk consumes that level-up's choice and is the only level at which `special_unit` is offered. Captured Villages keep prior owners' Perk choices, so a captor cannot retroactively summon a Hero from a captured level-5+ Village. See [ADR-0001](https://github.com/brandhaug/hexwardens/blob/master/docs/adr/0001-hero-as-level-up-perk.md) for the rationale.
+
+| Tribe      | Hero           | Ability       | Description                                      |
+| ---------- | -------------- | ------------- | ------------------------------------------------ |
+| Barbarians | Berserker      | Rage          | +2 ATK per kill this turn                        |
+| Rogues     | Shogun         | Bushido       | Adjacent allies get +3 ATK                       |
+| Druids     | Wolf           | Ambush        | 1.5x damage from jungle/forest                   |
+| Orcs       | Orc Raider     | Bloodlust     | Heals 5 HP on kill                               |
+| Wraiths    | Black Knight   | Hex Curse     | Attacks reduce target's ATK by 3 for 2 turns     |
+| Engineers  | Clanker        | Fortify       | Adjacent allies get +5 DEF                       |
+| Templars   | Paladin        | Piercing Shot | Ignores target's DEF and pierces the unit behind |
+| Skeletons  | Skeleton Golem | Mirage        | Dodges first attack each turn                    |
+| Frostkin   | Frostlord      | Frozen Ground | Nearby enemies have −1 movement                  |
+
+## Home Terrain
+
+Each Tribe's starting Village is placed on its home terrain during [board generation](/wiki/getting-started/terrain). The surrounding area will contain resources matching that terrain type, giving each Tribe natural access to specific resource types.
+
+## Tribe Elimination
+
+A Tribe is eliminated when it loses its **last Village** — typically when an enemy [Capture flips](/wiki/mechanics/capture) the Tribe's final holding. When eliminated:
+
+- All remaining Units of that Tribe are removed from the board.
+- The eliminated Tribe takes no further Turns.
+
+When a Tribe's [Hero](/wiki/units/unit-types) is killed, all other Units of that Tribe receive a morale-loss debuff (−1 ATK for 2 turns).
+
+## Tribe Colors
+
+Each Tribe has a distinctive color used for Villages, Units, and UI elements. Colors help identify ownership at a glance across the hex grid.

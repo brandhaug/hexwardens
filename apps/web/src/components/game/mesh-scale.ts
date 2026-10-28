@@ -1,0 +1,2 @@
+export const AUTO_SCALE_TARGET_SIZE = 0.5
+export const MESH_VISUAL_SCALE_MULTIPLIER = 1.62

@@ -1,0 +1,55 @@
+name: Audit
+on:
+  pull_request:
+  push:
+    branches: [master]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 9 * * 1'
+permissions:
+  contents: read
+concurrency:
+  group: audit-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    permissions:
+      contents: read
+      pull-requests: read # Gitleaks enumerates the commits in the PR.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - name: Use built-in secret rules without PR-controlled exclusions
+        run: printf '[extend]\nuseDefault = true\n' > "$RUNNER_TEMP/gitleaks.toml"
+      - name: Detect committed secrets
+        uses: gitleaks/gitleaks-action@e0c47f4f8be36e29cdc102c57e68cb5cbf0e8d1e # v3.0.0
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITLEAKS_VERSION: 8.30.1
+          GITLEAKS_CONFIG: ${{ runner.temp }}/gitleaks.toml
+          GITLEAKS_ENABLE_COMMENTS: 'false'
+          GITLEAKS_ENABLE_UPLOAD_ARTIFACT: 'false'
+      - name: Verify secret detection against synthetic fixtures
+        run: pnpm exec vp test run .github/scripts/secret-scan.test.ts
+        env:
+          GITLEAKS_BINARY: gitleaks
+      - uses: aquasecurity/setup-trivy@81e514348e19b6112ce2a7e3ecbafe19c1e1f567 # v0.3.1
+        with:
+          version: v0.74.0
+          cache: false
+      - name: Verify vulnerability severity and exception scope
+        run: pnpm exec vp test run .github/scripts/trivy.test.ts
+        env:
+          TRIVY_BINARY: trivy
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ (github.event.pull_request.base.ref == github.event.repository.default_branch && github.event.pull_request.base.sha) || github.event.repository.default_branch }}
+          path: .audit-policy-base
+          persist-credentials: false
+      - name: Audit lockfile against trusted exceptions
+        run: node .github/scripts/run-trivy.ts .audit-policy-base

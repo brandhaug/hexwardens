@@ -1,0 +1,44 @@
+---
+title: 'Game Overview'
+description: 'Introduction to Hexwardens — a turn-based hex-grid strategy game with tribes, two-step capture, six-Path tech research, and last-tribe-standing victory.'
+category: getting-started
+order: 1
+---
+
+Hexwardens is a **turn-based strategy game** played on a hexagonal grid. You lead a [Tribe](/wiki/tribes/all-tribes) competing against rival factions for dominance over a procedurally generated world.
+
+## Core Gameplay
+
+Each match starts by choosing a Tribe, number of opponents, and difficulty in the [setup screen](/wiki/getting-started/setup). The world is then generated with [terrain](/wiki/getting-started/terrain), Villages, resources, buildings, and ruins scattered across the hex grid.
+
+On your turn, you can:
+
+- **[Train units](/wiki/units/training-and-healing)** at your Villages
+- **[Move units](/wiki/mechanics/movement)** across the map
+- **[Attack](/wiki/units/combat)** enemy units
+- **[Capture](/wiki/mechanics/capture)** enemy Villages — a two-step Action that resolves on your next Turn
+- **[Build](/wiki/buildings/primary-buildings)** structures within your territory
+- **[Collect](/wiki/mechanics/resources)** resources near your Villages
+- **[Explore](/wiki/mechanics/ruins)** ruins for rewards
+- **[Research](/wiki/mechanics/technology)** new technologies on the six-Path tree
+- **[Recover](/wiki/units/training-and-healing#recover-self-heal-free)** wounded units (free self-heal)
+- **[Retire](/wiki/units/training-and-healing#retiring-units)** non-Hero units (after researching Market) to recover gold
+- **[End your turn](/wiki/mechanics/turns)** to collect salary, tick research, and pass play to the next Tribe
+
+## Winning the Game
+
+Victory is binary: the **last Tribe standing wins**. A Tribe is **eliminated** when it loses all its [Villages](/wiki/buildings/villages) — all of its remaining units are then removed from the board.
+
+The Match retains a 500-Turn cap as a draw safety valve. If the cap is reached with more than one Tribe alive, the Match ends as a **draw with no winner**. There is no Victory-Points scoring system — see [ADR-0002](https://github.com/brandhaug/hexwardens/blob/master/docs/adr/0002-drop-victory-points.md) for the rationale.
+
+## Economy
+
+Your primary currency is **gold**. Each Village generates salary when you end your Turn, equal to its level. You spend gold to train Units, build structures, collect resources, [research technologies](/wiki/mechanics/technology) (which scale +1 per Village), and [heal](/wiki/units/training-and-healing) wounded Units.
+
+## Capital
+
+Each Tribe begins with a single **[Capital](/wiki/buildings/villages#capital)** Village that grants +1 maximum population at every level. The Capital flag survives capture but is never re-assigned — a Tribe gets exactly one Capital per Match.
+
+## Heroes
+
+Each Tribe has a unique [Hero](/wiki/units/unit-types#hero-units) Unit summoned only via the `special_unit` [Village Perk](/wiki/buildings/villages#village-perks) at level 5. Heroes are not trainable with gold and have fixed stats — see [ADR-0001](https://github.com/brandhaug/hexwardens/blob/master/docs/adr/0001-hero-as-level-up-perk.md).

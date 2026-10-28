@@ -1,0 +1,137 @@
+---
+title: 'Combat'
+description: 'How combat works in Hexwardens — damage formula, passives, hero abilities, debuffs, counter-attacks, knockback, and post-combat outcomes.'
+category: units
+order: 2
+---
+
+Combat in Hexwardens resolves immediately when a unit attacks an enemy within range.
+
+## Initiating Combat
+
+To attack, select your unit and choose an enemy target within range. A unit can attack if:
+
+- It is in **ready** mode (hasn't acted this turn), **or**
+- It is in **moved** mode and has **canAttackAfterMove** (see [unit abilities](/wiki/units/unit-types))
+- The target is an enemy unit within the attacker's range
+
+Guards and Mages **cannot** attack after moving. Flying units default to attacking after moving.
+
+### Unit modes after acting
+
+- **acted** — finished for the turn. The default state after attacking.
+- **moved** — used a move action. Most units can no longer attack; units with `canAttackAfterMove` still can.
+- **retreat** — Seer-only state after attacking. One follow-up move is allowed, then the unit is spent.
+
+**Sprinter rampage**: when a Sprinter kills its target, it enters **moved** instead of **acted**, freeing it to reposition (and attack again, since Sprinters have `canAttackAfterMove`). Chain kills are punishing for the defender's line.
+
+## Damage Calculation
+
+Damage scales with the attacker's remaining health. Wounded units deal less damage:
+
+| Attacker HP | Attack Power  |
+| ----------- | ------------- |
+| 100%        | 100%          |
+| 75%         | 81%           |
+| 50%         | 63%           |
+| 25%         | 44%           |
+| 0%          | 25% (minimum) |
+
+The formula is: `attackScale = 0.25 + 0.75 × (currentHP / maxHP)`. Even a nearly dead unit still deals 25% of its base attack.
+
+### Defense Reduction
+
+Defense reduces incoming damage by **2% per defense point**. Maximum reduction is capped at **98%**.
+
+### Damage Modifiers
+
+Multiple factors can modify the base attack before HP scaling is applied:
+
+| Modifier                                      | Effect                  |
+| --------------------------------------------- | ----------------------- |
+| [Veterancy](/wiki/units/unit-types) ATK bonus | Added to base ATK       |
+| [Tech passives](/wiki/mechanics/technology)   | Various ATK/DEF bonuses |
+| [Passive abilities](/wiki/units/unit-types)   | Situational (see below) |
+| [Debuffs](#debuffs)                           | Reduce ATK              |
+| Auras (Bushido, Fortify)                      | Boost nearby allies     |
+
+Heroes have fixed stats and do not gain veterancy or level bonuses; their punch comes entirely from base stats and their unique [ability](/wiki/units/unit-types#hero-roles).
+
+## Passive Abilities in Combat
+
+[Unit passives](/wiki/units/unit-types) trigger automatically during combat:
+
+- **Brace** (Spearman) — 1.5x damage when **counter-attacking** cavalry (Seer, Sprinter, Tidebreaker)
+- **Charge** (Sprinter) — +5 ATK when attacking after moving
+- **Splash** (Bombardier, Mage) — Each hit also deals reduced damage (a fraction of the primary, min 1) to every enemy unit adjacent to the target tile
+- **Tide Command** (Tidebreaker) — Strong on water and can attack after moving there
+
+## Hero Abilities in Combat
+
+[Hero abilities](/wiki/units/unit-types) provide unique combat advantages:
+
+- **Rage** (Berserker) — +2 ATK per kill this turn. Chain kills make the Berserker increasingly deadly
+- **Bushido** (Shogun) — Aura grants adjacent friendly units +3 ATK
+- **Ambush** (Wolf) — 1.5x damage when attacking from jungle or forest tiles
+- **Bloodlust** (Orc Raider) — Heals 5 HP on kill, sustaining through multi-unit engagements
+- **Hex Curse** (Black Knight) — Applies a debuff on hit: −3 ATK for 2 turns
+- **Fortify** (Clanker) — Aura grants adjacent friendly units +5 DEF
+- **Piercing Shot** (Paladin) — Ignores target's DEF entirely **and** pierces through to the enemy directly behind on the same line
+- **Mirage** (Skeleton Golem) — The first attack received each turn is dodged automatically
+- **Frozen Ground** (Frostlord) — Enemies within 1 tile have movement reduced by 1
+
+## Debuffs
+
+Debuffs reduce a unit's effectiveness for a limited duration:
+
+| Debuff      | Effect | Duration | Source                               |
+| ----------- | ------ | -------- | ------------------------------------ |
+| Hex Curse   | −3 ATK | 2 turns  | Black Knight attack                  |
+| Morale Loss | −1 ATK | 2 turns  | Applied to tribe when Hero is killed |
+
+Debuffs tick down at the start of each new round and are removed when their duration expires.
+
+## Terrain & Position Modifiers
+
+- **Stone defense** — defenders standing on a stone tile gain a defensive bonus (Climbing tech is required to enter the tile in the first place; see [terrain](/wiki/getting-started/terrain)).
+- **City Wall** — once you research **City Wall**, your units gain +5 DEF while defending on a tile inside one of your own villages' range.
+- **Naval combat** — units fighting on water use their water-form stats (boat / bombship / battleship) instead of their land stats. See [movement](/wiki/mechanics/movement) for the per-unit progression.
+
+## Counter-Attacks
+
+If the defender **survives** the initial attack and the attacker is within the defender's range, the defender automatically **counter-attacks**:
+
+- **Melee vs. melee** — The defender always counters
+- **Ranged vs. melee** — Ranged units attacking from beyond melee range avoid counter-attacks entirely
+- **Counter-attacks can kill** — A strong defender can take down a weakened attacker on the counter
+- **Skeleton Golem** — Can dodge counter-attacks with Mirage if not yet attacked that turn
+- **Knockback** — A target that was actually pushed (or drowned) cannot counter-attack (see below)
+
+## Knockback
+
+When an attacker carries the [Knockback passive](/wiki/units/unit-types#passive-abilities), combat resolves in this order:
+
+1. Damage is applied to the target.
+2. If the target died, stop — no push, no counter.
+3. Otherwise, the target is pushed one tile in the direction `attacker → target`.
+4. If the destination is **blocked** (off-board, occupied, or stone), the target takes **+5 damage** and stays put — counter-attack still fires if it survives.
+5. If the destination is **water or ocean** and the target is non-naval (`waterMovement < 2`), the target **drowns** and is removed from the board.
+6. A target that actually moved or drowned does **not** counter-attack.
+
+Knockback-induced kills (drown or blocked-damage lethal) cascade through the same `onDeath` hooks as a regular lethal hit, so Hero morale debuffs propagate correctly.
+
+No production unit currently carries Knockback — the system is opt-in and waits for the next unit assignment.
+
+## After Combat
+
+### Melee Kill
+
+When a melee unit (range 1) kills its target, it **moves to the defender's tile**. This enables chaining kills into [Village captures](/wiki/buildings/villages) — though the [Capture](/wiki/mechanics/capture) action itself is a separate two-step flow.
+
+### Ranged Kill
+
+Ranged units (range > 1) stay in their original position after killing a target.
+
+### Tribe Elimination
+
+When a Tribe's last Village's [capture flips](/wiki/mechanics/capture), that Tribe is eliminated and all of its remaining units are removed from the board.

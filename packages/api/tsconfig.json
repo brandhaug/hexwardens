@@ -1,0 +1,15 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"include": ["src/**/*.ts", "../game-logic/src/globals.d.ts"],
+	"compilerOptions": {
+		"plugins": [
+			{
+				"name": "@effect/language-service",
+				// Effect v4 HTTP and reactive APIs are intentional; retain all other diagnostics.
+				"diagnosticSeverity": {
+					"unstableApiUsage": "off"
+				}
+			}
+		]
+	}
+}

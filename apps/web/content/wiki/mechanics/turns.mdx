@@ -1,0 +1,55 @@
+---
+title: 'Turn System'
+description: 'How turns work — rounds, player turns, unit modes, salary, research, capture flips, debuffs, and elimination.'
+category: mechanics
+order: 1
+---
+
+Hexwardens uses a turn-based system where each Tribe acts in sequence within a **round**. A round ends once every active Tribe has taken a turn.
+
+## Turn Flow
+
+1. **Capture flip** — At the very start of an active Tribe's Turn, any [pending captures](/wiki/mechanics/capture) initiated by this Tribe on the previous Turn are resolved: ownership flips for Villages that still hold a friendly Unit; markers are cleared otherwise.
+2. **Player actions** — The active Player performs any number of actions (move, attack, build, research, capture, recover, etc.).
+3. **Pending Perk choices** — Any [Village Perk](/wiki/buildings/villages#village-perks) prompts queued from a level-up earlier this Turn must be resolved before ending the Turn.
+4. **End turn** — The Player ends their Turn and collects **salary** from all their Villages.
+5. **Research tick** — If the Player has [research in progress](/wiki/mechanics/technology), the remaining Turns count decreases by 1. If it reaches 0, the technology is completed.
+6. **Next Tribe** — Steps 1–5 repeat for each active (non-eliminated) Tribe.
+7. **New round** — After all Tribes have acted, the round counter increments and Unit states are reset.
+
+## Unit Modes
+
+Units cycle through modes during a round:
+
+- **Ready** — Can perform any action (move, attack, recover, explore, capture)
+- **Moved** — Has moved but may still attack (if the unit type allows it)
+- **Acted** — Has used its action for the turn; no further actions possible. Capturing Units stay in `acted` for the entire setup window.
+- **Retreat** — Seer state after attacking. One follow-up move is allowed, but no further attack this round.
+
+All Units across all Tribes return to **ready** at the start of each new round. Plan your actions carefully — once a Unit has acted, it cannot act again until the next round begins.
+
+## New Round Resets
+
+At the start of each new round:
+
+- All Unit modes reset to **ready**
+- Per-turn fields reset: kills this turn, attack flags
+- [Debuffs](/wiki/units/combat#debuffs) tick down by 1 turn and are removed when expired
+
+## Salary
+
+When a Player ends their Turn, they collect salary from every Village they own. Each Village produces gold equal to its current level — a level 5 Village pays 5 gold per Turn. See [Villages](/wiki/buildings/villages) for details on leveling.
+
+## Elimination
+
+A Tribe is eliminated when it owns **zero Villages** — typically the moment a [Capture flip](/wiki/mechanics/capture) takes its last Village.
+
+- The Tribe is removed from the active rotation and no longer takes Turns.
+- All remaining Units belonging to the Tribe are removed from the board.
+
+## Victory & Draw
+
+- The Match ends when **only one Tribe** remains with at least one Village; that Tribe is the winner.
+- A **500-Turn cap** is retained as a draw safety valve. If the cap is reached with more than one Tribe still alive, the Match ends as a draw with no winner declared.
+
+There is no Victory-Points scoring track — the result is binary on Tribe survival, with the cap as a draw release valve. See [ADR-0002](https://github.com/brandhaug/hexwardens/blob/master/docs/adr/0002-drop-victory-points.md) for the rationale.
