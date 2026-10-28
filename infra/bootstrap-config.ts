@@ -1,4 +1,4 @@
-import { type Policy } from 'alchemy/Cloudflare/ApiToken'
+import { type Policy } from '@alchemy.run/cloudflare/ApiToken'
 import { Config, Effect, Schema } from 'effect'
 
 const accountPattern = /^[a-f0-9]{32}$/

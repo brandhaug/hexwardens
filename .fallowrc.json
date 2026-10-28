@@ -34,8 +34,11 @@
 		{
 			"name": "alchemy-deployment",
 			"enablers": ["alchemy"],
-			"toolingDependencies": ["@effect/platform-node"],
-			"entryPoints": ["alchemy.run.ts"],
+			"toolingDependencies": [
+				"@effect/platform-node",
+				"@alchemy.run/frontend-frameworks"
+			],
+			"entryPoints": ["alchemy.run.ts", "alchemy.bootstrap.ts"],
 			"entryPointRole": "support"
 		},
 		{

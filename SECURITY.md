@@ -14,7 +14,7 @@ Reports about authentication, authorization of game actions, fog-of-war filterin
 
 ## Infrastructure and CI controls
 
-Actions use immutable commit pins and read-only permissions by default. Production requires successful CI and Audit for the exact current default-branch commit. Bootstrap declares branch protection and the production environment; operators must apply it successfully before relying on those protections. Required checks do not replace review of workflow and infrastructure changes.
+Actions use immutable commit pins and read-only permissions by default. Production requires successful CI and Audit for the exact current default-branch commit. Operators configure branch protection directly in GitHub; bootstrap manages the production environment. Required checks do not replace review of workflow and infrastructure changes.
 
 Audit scans committed history with Gitleaks and the pnpm lockfile with Trivy, including development dependencies. High and critical findings fail. Trivy reads exceptions only from the trusted default-branch base, so a PR cannot exempt itself. Exceptions require a narrow vulnerability identifier, justification, owner and expiry. Scanner and advisory database failures must fail closed.
 

@@ -1,6 +1,6 @@
 # Deployment
 
-Hexwardens uses Alchemy v2. `alchemy.bootstrap.ts` manages operator access and GitHub configuration; `alchemy.run.ts` manages the application. Keep their state separate.
+Hexwardens uses Alchemy `2.0.0-beta.84`, with matching `@alchemy.run/cloudflare`, `@alchemy.run/github` and frontend-framework packages. `alchemy.bootstrap.ts` manages operator access and GitHub configuration; `alchemy.run.ts` manages the application. Keep their state separate.
 
 See the [runtime and recovery runbook](../DEPLOYMENT.md) for migration bookkeeping, paired-Worker compatibility, preview cleanup and backup restore procedures.
 
@@ -33,15 +33,7 @@ unset CLOUDFLARE_API_TOKEN GITHUB_TOKEN
 
 The GitHub credential needs repository administration, environments, secrets and variables write access. Review public deployment choices in `deployment.config.ts`. Empty reviewer lists permit automatic deployment after CI. Adding reviewers requires a GitHub plan that supports those environment protections.
 
-Bootstrap manages branch protection with required `CI gate`, `audit`, and `Conventional commit title` checks, pinned to the GitHub Actions app. It requires linear history and prevents force pushes and branch deletion. Repository merge settings should allow squash only and use the PR title:
-
-The pinned Alchemy patch sends `checks` without the legacy `contexts` field, which GitHub rejects when both are present. If bootstrap reports that more than one `oneOf` subschema matched, update the checkout and run `pnpm install --frozen-lockfile` before retrying. Preserve `.alchemy/` state when retrying a partial apply.
-
-```sh
-gh repo edit <owner>/<repository> --enable-squash-merge --disable-merge-commit --disable-rebase-merge --delete-branch-on-merge
-gh api --method PATCH repos/<owner>/<repository> \
-  -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
-```
+Configure [branch protection](#branch-protection) separately in GitHub before enabling releases. Bootstrap manages deployment access and environments only.
 
 Bootstrap creates the `production` environment, restricted to `master`, and publishes these environment secrets:
 
@@ -57,6 +49,44 @@ It sets repository variable `DEPLOY_ENABLED=true` after the secret resources are
 The scripts use `umask 077`. Local `.alchemy/` bootstrap state contains credential values, including tokens Cloudflare returns only once. Keep a private recoverable backup. Reapply from the same checkout; deleting state and re-running generates new credentials and auth secrets. A new auth secret invalidates existing sessions and game tokens. Bootstrap does not import credentials from the old repository or local-development `.env`.
 
 If an apply fails after token creation, retain the state and rerun. Do not destroy the bootstrap stack to roll back: that revokes its managed credentials. Before adopting bootstrap for an existing live installation, plan the auth-secret transition and confirm the application state identity.
+
+## Branch protection
+
+Branch protection and merge settings are owned directly in GitHub, outside Alchemy state. `CI gate` requires lint, typechecking, unit tests, builds and all E2E shards. Require it alongside Audit and the Conventional Commit PR-title check, all bound to the GitHub Actions app:
+
+```sh
+repo=brandhaug/hexwardens
+gh api --method PUT "repos/$repo/branches/master/protection" --input - <<'JSON'
+{
+  "required_status_checks": {
+    "strict": true,
+    "checks": [
+      { "context": "CI gate", "app_id": 15368 },
+      { "context": "audit", "app_id": 15368 },
+      { "context": "Conventional commit title", "app_id": 15368 }
+    ]
+  },
+  "enforce_admins": true,
+  "required_pull_request_reviews": { "required_approving_review_count": 0 },
+  "restrictions": null,
+  "required_linear_history": true,
+  "allow_force_pushes": false,
+  "allow_deletions": false,
+  "required_conversation_resolution": true
+}
+JSON
+gh repo edit "$repo" --enable-squash-merge --disable-merge-commit --disable-rebase-merge --delete-branch-on-merge
+gh api --method PATCH "repos/$repo" \
+  -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
+```
+
+For a checkout that previously declared `default-branch` in bootstrap, preserve a private backup of `.alchemy/` and detach that one state record before applying the updated stack:
+
+```sh
+pnpm exec alchemy state delete hexwardens-deployment-access/prod/default-branch --backend local --no-input
+```
+
+This deletes only Alchemy's record, not the GitHub rule. Do not delete the rest of bootstrap state. Verify live protection with `gh api repos/brandhaug/hexwardens/branches/master/protection`.
 
 ## Production
 
