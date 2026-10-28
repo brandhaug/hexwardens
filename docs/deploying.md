@@ -35,6 +35,8 @@ The GitHub credential needs repository administration, environments, secrets and
 
 Bootstrap manages branch protection with required `CI gate`, `audit`, and `Conventional commit title` checks, pinned to the GitHub Actions app. It requires linear history and prevents force pushes and branch deletion. Repository merge settings should allow squash only and use the PR title:
 
+The pinned Alchemy patch sends `checks` without the legacy `contexts` field, which GitHub rejects when both are present. If bootstrap reports that more than one `oneOf` subschema matched, update the checkout and run `pnpm install --frozen-lockfile` before retrying. Preserve `.alchemy/` state when retrying a partial apply.
+
 ```sh
 gh repo edit <owner>/<repository> --enable-squash-merge --disable-merge-commit --disable-rebase-merge --delete-branch-on-merge
 gh api --method PATCH repos/<owner>/<repository> \
