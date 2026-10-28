@@ -38,7 +38,7 @@ Store secrets in GitHub environments or a secrets manager. Never commit them. Bo
 
 ## Production release
 
-The `Deploy` workflow is inactive until bootstrap sets `DEPLOY_ENABLED=true`. It only deploys the current default-branch commit after both CI and Audit succeeded for that exact push. Configure `CI gate`, `audit` and `Conventional commit title` as required checks directly in GitHub, using the commands in [deployment setup](docs/deploying.md#branch-protection). Review workflow and infrastructure changes.
+The `Deploy` workflow is inactive until bootstrap sets `DEPLOY_ENABLED=true`. It only deploys the current default-branch commit after both CI and Audit succeeded for that exact push. Bootstrap requires `CI gate`, `audit` and `Conventional commit title`, bound to the GitHub Actions app. See [deployment setup](docs/deploying.md#branch-protection). Review workflow and infrastructure changes.
 
 For a reviewed manual release from a clean, validated checkout:
 

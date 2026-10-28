@@ -33,7 +33,7 @@ unset CLOUDFLARE_API_TOKEN GITHUB_TOKEN
 
 The GitHub credential needs repository administration, environments, secrets and variables write access. Review public deployment choices in `deployment.config.ts`. Empty reviewer lists permit automatic deployment after CI. Adding reviewers requires a GitHub plan that supports those environment protections.
 
-Configure [branch protection](#branch-protection) separately in GitHub before enabling releases. Bootstrap manages deployment access and environments only.
+Bootstrap manages [branch protection](#branch-protection), deployment access and environments.
 
 Bootstrap creates the `production` environment, restricted to `master`, and publishes these environment secrets:
 
@@ -52,41 +52,26 @@ If an apply fails after token creation, retain the state and rerun. Do not destr
 
 ## Branch protection
 
-Branch protection and merge settings are owned directly in GitHub, outside Alchemy state. `CI gate` requires lint, typechecking, unit tests, builds and all E2E shards. Require it alongside Audit and the Conventional Commit PR-title check, all bound to the GitHub Actions app:
+Bootstrap owns the `default-branch` protection resource. It requires `CI gate`, `audit` and `Conventional commit title`, all bound to the GitHub Actions app. `CI gate` includes lint, typechecking, unit tests, builds and all E2E shards. Protection applies to admins, requires up-to-date branches and resolved conversations, enforces linear history, and blocks force pushes and branch deletion.
+
+The beta.84 GitHub provider sends the correct status-check payload without a local patch. Reapplying bootstrap reconciles an existing rule. Its retain policy preserves protection if the resource is later removed from the stack. Keep existing bootstrap state; no state detachment is required.
+
+To reconcile only branch protection with the bootstrap inputs set, use beta.84's selective apply:
+
+```sh
+pnpm exec alchemy deploy alchemy.bootstrap.ts --stage prod --include default-branch
+```
+
+Repository merge settings still need the following one-time configuration. The provider does not expose the squash commit-title setting:
 
 ```sh
 repo=brandhaug/hexwardens
-gh api --method PUT "repos/$repo/branches/master/protection" --input - <<'JSON'
-{
-  "required_status_checks": {
-    "strict": true,
-    "checks": [
-      { "context": "CI gate", "app_id": 15368 },
-      { "context": "audit", "app_id": 15368 },
-      { "context": "Conventional commit title", "app_id": 15368 }
-    ]
-  },
-  "enforce_admins": true,
-  "required_pull_request_reviews": { "required_approving_review_count": 0 },
-  "restrictions": null,
-  "required_linear_history": true,
-  "allow_force_pushes": false,
-  "allow_deletions": false,
-  "required_conversation_resolution": true
-}
-JSON
 gh repo edit "$repo" --enable-squash-merge --disable-merge-commit --disable-rebase-merge --delete-branch-on-merge
 gh api --method PATCH "repos/$repo" \
   -f squash_merge_commit_title=PR_TITLE -f squash_merge_commit_message=PR_BODY
 ```
 
-For a checkout that previously declared `default-branch` in bootstrap, preserve a private backup of `.alchemy/` and detach that one state record before applying the updated stack:
-
-```sh
-pnpm exec alchemy state delete hexwardens-deployment-access/prod/default-branch --backend local --no-input
-```
-
-This deletes only Alchemy's record, not the GitHub rule. Do not delete the rest of bootstrap state. Verify live protection with `gh api repos/brandhaug/hexwardens/branches/master/protection`.
+Verify live protection with `gh api repos/brandhaug/hexwardens/branches/master/protection`.
 
 ## Production
 
