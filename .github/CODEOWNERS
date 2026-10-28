@@ -1,0 +1,8 @@
+# Routing for changes to credentials, deployments and contribution enforcement.
+/.github/ @brandhaug
+/.githooks/ @brandhaug
+/alchemy*.ts @brandhaug
+/deployment.config.ts @brandhaug
+/infra/ @brandhaug
+/SECURITY.md @brandhaug
+/LICENSE @brandhaug

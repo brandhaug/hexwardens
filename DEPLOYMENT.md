@@ -1,5 +1,7 @@
 # Deployment and recovery
 
+Start with [bootstrap and deployment setup](docs/deploying.md) for GitHub environments, generated credentials and release enablement. This runbook covers runtime, migration and recovery details.
+
 Alchemy owns both Workers, the shared D1 database and all three Durable Object classes. Deploying one Worker through Wrangler bypasses the paired web/game-server release and is not a supported production path. Generated Wrangler configurations are for local development only.
 
 ## Local runtime and configuration
@@ -10,7 +12,7 @@ Both local apps use database ID `placeholder` under `.wrangler-dev/state/v3/d1`.
 
 Alchemy's `Cloudflare.Website.Vite` adds its native Workers runtime plugin to the TanStack Start build. Do not add `@cloudflare/vite-plugin` alongside it. Ordinary local development and tests may use the explicit Node/Miniflare shim; the deploy command rejects shim environment flags. See [Alchemy's integration guide](https://alchemy.run/cloudflare/frontend/tanstack-start/).
 
-Verify shared local storage with `node infra/check-shared-d1.ts`. It creates temporary storage, checks a web write from a separate Wrangler process, checks migration history, then verifies legacy adoption preserves the write.
+Verify shared local storage with `node scripts/check-shared-d1.ts`. It creates temporary storage, checks a web write from a separate Wrangler process, checks migration history, then verifies legacy adoption preserves the write.
 
 ## Stage and resource safety
 
@@ -22,21 +24,21 @@ D1 migrations run before dependent Worker uploads. Alchemy beta.79 uses `migrati
 
 ## Required configuration
 
-| Value                                           | Scope and purpose                                                                                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Deployment account and scoped deployment token.                                                         |
-| `AUTH_JWT_SECRET`                               | Shared game token signing and verification secret.                                                      |
-| `BETTER_AUTH_SECRET`                            | Session secret.                                                                                         |
-| `BETTER_AUTH_URL`, `GAME_SERVER_URL`            | Exact HTTPS production origins, with no path, credentials or trailing slash.                            |
-| `ALLOWED_ORIGIN`                                | Optional comma-separated game-server CORS origins. Defaults to the web origin.                          |
-| `BETTER_AUTH_TRUSTED_ORIGINS`                   | Optional extra exact HTTPS origins. Defaults to the web origin.                                         |
-| `CLOUDFLARE_WORKERS_SUBDOMAIN`                  | Preview account subdomain, resolved by the preview workflow. Preview URLs are derived from stage names. |
+| Value                                           | Scope and purpose                                                                                    |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `CLOUDFLARE_ACCOUNT_ID`, `CLOUDFLARE_API_TOKEN` | Deployment account and scoped deployment token.                                                      |
+| `AUTH_JWT_SECRET`                               | Shared game token signing and verification secret.                                                   |
+| `BETTER_AUTH_SECRET`                            | Session secret.                                                                                      |
+| `BETTER_AUTH_URL`, `GAME_SERVER_URL`            | Optional exact HTTPS production origin overrides; otherwise discovered workers.dev origins are used. |
+| `ALLOWED_ORIGIN`                                | Optional comma-separated game-server CORS origins. Defaults to the web origin.                       |
+| `BETTER_AUTH_TRUSTED_ORIGINS`                   | Optional extra exact HTTPS origins. Defaults to the web origin.                                      |
+| `CLOUDFLARE_WORKERS_SUBDOMAIN`                  | Account subdomain, discovered by the deployment wrapper and workflows when needed.                   |
 
-Store secrets in protected GitHub environments or a secrets manager. Never commit them. GitHub environment `production` must require reviewers, prohibit self-approval and allow only the default branch. Its plain URLs belong in environment variables; secrets belong in environment secrets.
+Store secrets in GitHub environments or a secrets manager. Never commit them. Bootstrap restricts `production` to the default branch. Configure reviewers in `deployment.config.ts` when deployment approval is required; self-approval is disabled when reviewers are configured. Plain URLs belong in environment variables.
 
 ## Production release
 
-The `Deploy` workflow is inactive until `DEPLOY_ENABLED=true`. It only deploys the current default-branch commit after both CI and Audit succeeded for that exact push. Set branch protection to require `CI gate` and `audit`, retain existing required check names, and require review of workflow and infrastructure changes.
+The `Deploy` workflow is inactive until bootstrap sets `DEPLOY_ENABLED=true`. It only deploys the current default-branch commit after both CI and Audit succeeded for that exact push. Bootstrap declares `CI gate`, `audit` and `Conventional commit title` as required checks. Review workflow and infrastructure changes.
 
 For a reviewed manual release from a clean, validated checkout:
 
@@ -56,7 +58,7 @@ A failed upload can leave only one Worker updated. Deployments are atomic per Wo
 
 ## Preview lifecycle
 
-Set `PREVIEW_ENABLED=true` only after creating a separate Cloudflare preview account. The `preview` environment requires approval before running same-repository PR code. Forks and Dependabot are excluded. Store `PREVIEW_CLOUDFLARE_ACCOUNT_ID`, `PREVIEW_CLOUDFLARE_API_TOKEN`, `PREVIEW_AUTH_JWT_SECRET`, and `PREVIEW_BETTER_AUTH_SECRET` there. Production secrets must not exist at repository scope.
+Bootstrap enables previews after publishing separate-account credentials. Configure preview reviewers in `deployment.config.ts` to require approval before running same-repository PR code. Forks and Dependabot are excluded. Bootstrap publishes `PREVIEW_CLOUDFLARE_ACCOUNT_ID`, `PREVIEW_CLOUDFLARE_API_TOKEN`, `PREVIEW_AUTH_JWT_SECRET`, and `PREVIEW_BETTER_AUTH_SECRET`. Production secrets must not exist at repository scope.
 
 The `preview-cleanup` environment uses the same preview-only credentials and permits the default branch without approval. Closing a PR runs cleanup from trusted default-branch code. Deploy and destroy share a non-cancelling concurrency group so Alchemy state mutations finish before cleanup. The job summary lists preview URLs; no demo credentials or production snapshot are seeded.
 
