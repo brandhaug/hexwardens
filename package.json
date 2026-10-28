@@ -42,6 +42,9 @@
 	},
 	"dependencies": {},
 	"devDependencies": {
+		"@alchemy.run/cloudflare": "catalog:",
+		"@alchemy.run/frontend-frameworks": "catalog:",
+		"@alchemy.run/github": "catalog:",
 		"@effect/platform-node": "catalog:",
 		"@effect/tsgo": "catalog:",
 		"@gltf-transform/cli": "catalog:",

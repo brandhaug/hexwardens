@@ -7,6 +7,8 @@
 		"test": "node --test operations.test.ts backup.test.ts"
 	},
 	"devDependencies": {
+		"@alchemy.run/cloudflare": "catalog:",
+		"@alchemy.run/github": "catalog:",
 		"@cloudflare/workers-types": "catalog:",
 		"@effect/tsgo": "catalog:",
 		"@types/node": "catalog:",

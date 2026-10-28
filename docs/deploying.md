@@ -1,6 +1,6 @@
 # Deployment
 
-Hexwardens uses Alchemy v2. `alchemy.bootstrap.ts` manages operator access and GitHub configuration; `alchemy.run.ts` manages the application. Keep their state separate.
+Hexwardens uses Alchemy `2.0.0-beta.84`, with matching `@alchemy.run/cloudflare`, `@alchemy.run/github` and frontend-framework packages. `alchemy.bootstrap.ts` manages operator access and GitHub configuration; `alchemy.run.ts` manages the application. Keep their state separate.
 
 See the [runtime and recovery runbook](../DEPLOYMENT.md) for migration bookkeeping, paired-Worker compatibility, preview cleanup and backup restore procedures.
 

@@ -20,7 +20,7 @@ Only `prod` and `pr-<positive PR number>` are accepted. Production keeps `hexwar
 
 The entry retains the existing Alchemy stack and logical resource IDs. D1 has a production retain policy, and the repository's destroy command rejects production unconditionally. These protections do not make arbitrary direct cloud commands safe. Before the first upgraded production release, inspect the Alchemy plan against the existing account and stage, and confirm it proposes no database or DO replacement. An older stack deployed under a user-named stage requires an explicit state migration; do not deploy a fresh `prod` stack over it blindly.
 
-D1 migrations run before dependent Worker uploads. Alchemy beta.79 uses `migrations: { dir }` and adopts Wrangler's migration ledger into `__alchemy_migrations`. This is a one-way bookkeeping migration. Keep SQL migrations append-only; do not return to the older Alchemy release or manually apply production migrations through Wrangler afterward.
+D1 migrations run before dependent Worker uploads. Alchemy uses `migrations: { dir }` and adopts Wrangler's migration ledger into `__alchemy_migrations`. This is a one-way bookkeeping migration. Keep SQL migrations append-only; do not return to the older Alchemy release or manually apply production migrations through Wrangler afterward.
 
 ## Required configuration
 

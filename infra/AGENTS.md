@@ -5,6 +5,7 @@
 Branch protection is configured directly in GitHub, outside Alchemy state. Bootstrap must not create or delete branch protection.
 
 - App state uses `Cloudflare.state()`. Bootstrap uses private local state and stable `Alchemy.Random` credentials. Preserve the bootstrap state; it holds token values Cloudflare returns only once.
+- Keep Alchemy and its `@alchemy.run/*` providers on the same beta version. Import providers from their packages, not the removed `alchemy/Cloudflare` or `alchemy/GitHub` paths.
 - `bindings.ts` owns resource names, compatibility settings, rate limits and origin validation. `write-wrangler.ts` generates local configs; run `pnpm run infra:wrangler` after changing those contracts.
 - `deployment-env.ts` discovers the Workers subdomain. The CLI, CI and smoke checks share its origins. Preview origins always ignore production overrides.
 - Production logical IDs, physical names and the `prod` stage are persistence identities. Renaming the Git repository does not authorize replacing D1 or Durable Objects.
