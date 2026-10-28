@@ -1,0 +1,36 @@
+name: PR Gate
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  conventional-commit:
+    name: Conventional commit title
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: amannn/action-semantic-pull-request@e32d7e603df1aa1ba07e981f2a23455dee596825 # v5
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        with:
+          types: |
+            feat
+            fix
+            chore
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            revert
+          scopes: |
+            [a-z0-9][a-z0-9./_-]*
+          requireScope: false
+          subjectPattern: ^\S(?:.*\S)?$
+          subjectPatternError: Use a nonempty subject without leading or trailing whitespace.
