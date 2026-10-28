@@ -2,7 +2,7 @@
 
 `alchemy.run.ts` owns application resources. `alchemy.bootstrap.ts` owns deployment access and GitHub environments. Read [docs/deploying.md](../docs/deploying.md) for operator inputs and recovery.
 
-Branch protection is configured directly in GitHub, outside Alchemy state. Bootstrap must not create or delete branch protection.
+Bootstrap owns the `default-branch` GitHub protection rule through the beta.84 provider. Its retain policy preserves live protection if the resource is removed. Keep required checks bound to the GitHub Actions app.
 
 - App state uses `Cloudflare.state()`. Bootstrap uses private local state and stable `Alchemy.Random` credentials. Preserve the bootstrap state; it holds token values Cloudflare returns only once.
 - Keep Alchemy and its `@alchemy.run/*` providers on the same beta version. Import providers from their packages, not the removed `alchemy/Cloudflare` or `alchemy/GitHub` paths.
